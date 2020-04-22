@@ -1,4 +1,4 @@
-package com.nbt.comp2100_bunker_survival;
+package com.nbt.comp2100_bunker_survival.activities;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -10,6 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nbt.comp2100_bunker_survival.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
