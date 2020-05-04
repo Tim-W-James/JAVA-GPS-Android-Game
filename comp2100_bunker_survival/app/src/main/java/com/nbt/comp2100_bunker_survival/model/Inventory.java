@@ -24,7 +24,7 @@ public class Inventory {
     // constants
     public static final int RESOURCE_MAX = 9999;
     public static final int RESOURCE_MIN = 0;
-    public static final int ITEMS_MAX = 5;
+    public static final int ITEMS_MAX = 25;
 
     // empty inventory
     public Inventory() {
