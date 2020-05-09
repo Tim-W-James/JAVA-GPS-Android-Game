@@ -3,6 +3,10 @@ package com.nbt.comp2100_bunker_survival.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.nbt.comp2100_bunker_survival.model.items.Item;
+
+import java.util.LinkedList;
+
 // holds metadata for each individual user of the app
 public class Player {
     // basic properties
@@ -72,16 +76,66 @@ public class Player {
     }
 
     // adds an input inventory to the player's current inventory.
-    // constrained
-    public Inventory addToCurrentInventory(Inventory inventoryToBeAdded) {
-        currentInventory.addInventory(inventoryToBeAdded, true);
-        return currentInventory;
+    // constrained, returns items that do not fit
+    public LinkedList<Item> addToCurrentInventory(Inventory inventoryToBeAdded) {
+        return currentInventory.addInventory(inventoryToBeAdded, true);
     }
 
     // adds the inventory of treasure to the player's current inventory
     public Inventory findTreasure(Treasure treasureFound) {
         addToCurrentInventory(treasureFound.getTreasureInventory());
         return currentInventory;
+    }
+
+    // returns item if it does not fit
+    public Item obtainItem(Item itemToObtain) {
+        return currentInventory.addUniqueItem(itemToObtain);
+    }
+
+    public void useItem(Item itemToUse) {
+        currentInventory.removeUniqueItem(itemToUse);
+    }
+
+    // return false if player has run out of food
+    public boolean isAlive() {
+        return currentInventory.getFood() > 0;
+    }
+
+    // consume inputted food.
+    // return false if player has run out of food
+    public boolean consumeFood(int foodConsumed) {
+        currentInventory.setFood(currentInventory.getFood() - foodConsumed);
+        return isAlive();
+    }
+
+    // return true if player can afford input value, item or inventory
+    public boolean canAfford(int value) {
+        return currentInventory.getScrapMetal() >= value;
+    }
+    public boolean canAfford(Item item) {
+        return canAfford(item.getTradingValue());
+    }
+    public boolean canAfford(Inventory inventory) {
+        return canAfford(inventory.getValue());
+    }
+
+    // buy an item or inventory if able to afford.
+    // returns items that do not fit
+    public Item buyItem(Item itemToBuy) {
+        if (canAfford(itemToBuy)) {
+            currentInventory.setScrapMetal(currentInventory.getScrapMetal() - itemToBuy.getTradingValue());
+            return obtainItem(itemToBuy);
+        }
+        else
+            return null;
+    }
+    public LinkedList<Item> buyInventory(Inventory inventoryToBuy) {
+        if (canAfford(inventoryToBuy)) {
+            currentInventory.setScrapMetal(currentInventory.getScrapMetal() - inventoryToBuy.getValue());
+            return addToCurrentInventory(inventoryToBuy);
+        }
+        else
+            return null;
     }
 
     // two players are equal if they share the same basic properties,

@@ -107,10 +107,30 @@ public class InventoryTest {
     }
 
     @Test
-    public void verifyAndConstrainInventoryTest() {
+    public void complexVerifyInventoryTest() {
         Inventory invOverPopulated = new Inventory(Inventory.RESOURCE_MAX+1, Inventory.RESOURCE_MAX+1, Inventory.RESOURCE_MAX+1, itemListOverPopulated);
         assertFalse("Inventory should not be valid before constrain", invOverPopulated.verifyInventory());
         invOverPopulated.constrainInventory();
         assertTrue("Inventory should be valid after constrain", invOverPopulated.verifyInventory());
+
+        assertEquals("Adding an item that does not fit should return that item", weapon1, invOverPopulated.addUniqueItem(weapon1));
+        assertTrue("Inventory should be valid after adding item", invOverPopulated.verifyInventory());
+
+        invOverPopulated.removeUniqueItem(new Weapon("name", "description", 0, 0));
+        assertNull("Adding an item that does fit should return null", invOverPopulated.addUniqueItem(weapon2));
+        assertTrue("Inventory should be valid after adding item", invOverPopulated.verifyInventory());
+    }
+
+    @Test
+    public void calculateValueTest() {
+        int food = 10;
+        int scrapMetal = 90;
+        int toiletPaper = 3;
+        int uniqueItemsTotal = weapon1.getTradingValue() + weapon2.getTradingValue() + weapon3.getTradingValue();
+        int totalValue = (food * Inventory.FOOD_VALUE) + scrapMetal + (toiletPaper * Inventory.TOILETPAPER_VALUE) + uniqueItemsTotal;
+        assertEquals(totalValue, Inventory.calculateValue(food, scrapMetal, toiletPaper, itemListNorm1));
+
+        Inventory inv1 = new Inventory(food, scrapMetal, toiletPaper, itemListNorm1);
+        assertEquals(totalValue, inv1.getValue());
     }
 }

@@ -17,16 +17,20 @@ public class Inventory {
     // basic resources.
     // note that negative values can be used for subtracting from another inventory,
     // for such inventories do not constrain
-    private int food;
-    private int scrapMetal;
-    private int toiletPaper;
+    private int food; // keeps the player alive
+    private int scrapMetal; // currency
+    private int toiletPaper; // ?
     // items
     private LinkedList <Item> uniqueItems;
+    // value is the total of all resources multiplied by respective values and trading value of items
+    private int value;
 
     // constants
     public static final int RESOURCE_MAX = 9999;
     public static final int RESOURCE_MIN = 0;
     public static final int ITEMS_MAX = 25;
+    public static final int FOOD_VALUE = 1;
+    public static final int TOILETPAPER_VALUE = 1;
 
     // empty inventory
     public Inventory() {
@@ -39,6 +43,7 @@ public class Inventory {
         this.scrapMetal = scrapMetal;
         this.toiletPaper = toiletPaper;
         this.uniqueItems = uniqueItems;
+        setValue();
     }
 
     // custom partial inventory of basic resources
@@ -91,6 +96,11 @@ public class Inventory {
         return uniqueItems;
     }
 
+    public int getValue() {
+        setValue();
+        return value;
+    }
+
     /*
      * set methods
      */
@@ -110,6 +120,10 @@ public class Inventory {
         this.toiletPaper = constrainResource(toiletPaper);
     }
 
+    public void setValue() {
+        this.value = calculateValue(this.food, this.scrapMetal, this.toiletPaper, this.uniqueItems);
+    }
+
     // constrained.
     // returns the Item if uniqueItems size exceeds ITEMS_MAX, otherwise returns null
     public Item addUniqueItem(Item itemToAdd) {
@@ -120,7 +134,6 @@ public class Inventory {
             return null;
         else
             return rtn.getLast();
-
     }
 
     public void removeUniqueItem(Item itemToRemove) {
@@ -130,6 +143,16 @@ public class Inventory {
     /*
      * class methods
      */
+
+    // get the total value of an inventory
+    public static int calculateValue(int food, int scrapMetal, int toiletPaper, LinkedList<Item> uniqueItems) {
+        int uniqueItemsTotalValue = 0;
+        for (Item item : uniqueItems) {
+            uniqueItemsTotalValue += item.getTradingValue();
+        }
+
+        return (food * FOOD_VALUE) + scrapMetal + (toiletPaper * TOILETPAPER_VALUE) + uniqueItemsTotalValue;
+    }
 
     // maintain min and max limits on an inputted resource
     public static int constrainResource(int count) {
@@ -217,9 +240,11 @@ public class Inventory {
                 uniqueItemsString.append(",\n\n");
             count++;
         }
+        setValue();
         return "Food: "+food+
                 "\nScrap Metal: "+scrapMetal+
                 "\nToilet Paper: "+toiletPaper+
+                "\nValue: "+value+
                 "\n\n==\nUnique Items:\n==\n\n"+uniqueItemsString;
     }
 }
