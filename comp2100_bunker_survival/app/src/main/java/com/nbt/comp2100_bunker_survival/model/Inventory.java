@@ -14,7 +14,9 @@ import java.util.LinkedList;
 // holds information on basic resources and unique items.
 // can either be the Inventory of treasure or a player
 public class Inventory {
-    // basic resources
+    // basic resources.
+    // note that negative values can be used for subtracting from another inventory,
+    // for such inventories do not constrain
     private int food;
     private int scrapMetal;
     private int toiletPaper;
@@ -28,7 +30,7 @@ public class Inventory {
 
     // empty inventory
     public Inventory() {
-        this(0, 0, 0);
+        this(RESOURCE_MIN, RESOURCE_MIN, RESOURCE_MIN);
     }
 
     // custom complex inventory
@@ -46,7 +48,7 @@ public class Inventory {
 
     // custom partial inventory of unique items
     public Inventory(LinkedList<Item> uniqueItems) {
-        this(0, 0, 0, uniqueItems);
+        this(RESOURCE_MIN, RESOURCE_MIN, RESOURCE_MIN, uniqueItems);
     }
 
     // custom partial inventory of basic resources and an Item
@@ -159,7 +161,8 @@ public class Inventory {
         return constrainUniqueItems(uniqueItems);
     }
 
-    // adds the basic resources and unique items of another inventory
+    // adds the basic resources and unique items of another inventory.
+    // add an inventory with negative values to subtract
     public Inventory addInventory(@NotNull Inventory inventoryToBeAdded) {
         food += inventoryToBeAdded.getFood();
         scrapMetal += inventoryToBeAdded.getScrapMetal();
@@ -170,6 +173,7 @@ public class Inventory {
 
     // adds the basic resources and unique items of another inventory,
     // and if isConstrained will maintain min and max limits on all resources.
+    // add an inventory with negative values to subtract.
     // returns a list of items that were removed from uniqueItems
     public LinkedList<Item> addInventory(@NotNull Inventory inventoryToBeAdded, boolean isConstrained) {
         addInventory(inventoryToBeAdded);
@@ -182,7 +186,10 @@ public class Inventory {
 
     // verify that the inventory is valid
     public boolean verifyInventory() {
-        return (food > 999);
+        return (food <= RESOURCE_MAX && food >= RESOURCE_MIN &&
+                scrapMetal <= RESOURCE_MAX && scrapMetal >= RESOURCE_MIN &&
+                toiletPaper <= RESOURCE_MAX && toiletPaper >= RESOURCE_MIN &&
+                uniqueItems.size() <= ITEMS_MAX);
     }
 
     // two inventories are equal if they share the same number of basic resources,
