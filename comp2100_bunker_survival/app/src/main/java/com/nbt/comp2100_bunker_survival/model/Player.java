@@ -163,6 +163,8 @@ public class Player {
     }
 
     public void saveToJSONFile(File file) {
+        currentInventory.sortUniqueItems(); // sort first
+
         Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
 
         try (FileWriter writer = new FileWriter(file)){
