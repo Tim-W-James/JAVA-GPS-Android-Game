@@ -52,7 +52,7 @@ public class PlayerTest {
                 invNorm1.getScrapMetal()+invNorm2.getScrapMetal(),
                 invNorm1.getToiletPaper()+invNorm2.getToiletPaper(),
                 itemListNorm3);
-        Player player1 = new Player("123", "Bob", invNorm1);
+        Player player1 = new Player("Bob", invNorm1);
         Treasure treasure1 = new Treasure("name", 0, 0, 0, invNorm2);
 
         assertNotEquals("Treasure not yet found", invAdded, player1.getCurrentInventory());
@@ -67,21 +67,21 @@ public class PlayerTest {
 
     @Test
     public void defaultCurrentInventoryTest() {
-        Player player1 = new Player("123", "Bob", new Inventory(1, 1, 1, itemListNorm1));
+        Player player1 = new Player("Bob", new Inventory(1, 1, 1, itemListNorm1));
         player1.defaultCurrentInventory();
         assertEquals(Inventory.defaultPlayerInventory(), player1.getCurrentInventory());
     }
 
     @Test
     public void clearCurrentInventoryTest() {
-        Player player1 = new Player("123", "Bob", new Inventory(1, 1, 1, itemListNorm1));
+        Player player1 = new Player("Bob", new Inventory(1, 1, 1, itemListNorm1));
         player1.clearCurrentInventory();
         assertEquals(new Inventory(), player1.getCurrentInventory());
     }
 
     @Test
     public void buyItemTest() {
-        Player player1 = new Player("123", "Bob", new Inventory(0,curiosity1.getTradingValue()-1,0, itemListNorm1));
+        Player player1 = new Player("Bob", new Inventory(0,curiosity1.getTradingValue()-1,0, itemListNorm1));
         player1.buyItem(curiosity1);
         assertEquals("Should not add item if cannot afford", 3, player1.getCurrentInventory().getUniqueItems().size());
         assertEquals("Should not subtract scrap metal if cannot afford", curiosity1.getTradingValue()-1, player1.getCurrentInventory().getScrapMetal());
@@ -101,7 +101,7 @@ public class PlayerTest {
                 invNorm1.getScrapMetal()+invNorm2.getScrapMetal(),
                 invNorm1.getToiletPaper()+invNorm2.getToiletPaper(),
                 itemListNorm3);
-        Player player1 = new Player("123", "Bob", invNorm2);
+        Player player1 = new Player("Bob", invNorm2);
         player1.buyInventory(invNorm1);
         assertEquals("Should not add inventory if cannot afford", 1, player1.getCurrentInventory().getFood());
         assertEquals("Should not subtract scrap metal if cannot afford", invNorm1.getValue()-1, player1.getCurrentInventory().getScrapMetal());
@@ -115,7 +115,7 @@ public class PlayerTest {
     @Test
     public void consumeFoodTest() {
         Inventory invNorm1 = new Inventory(3, 0, 0);
-        Player player1 = new Player("123", "Bob", invNorm1);
+        Player player1 = new Player("Bob", invNorm1);
         assertTrue(player1.consumeFood(1));
         assertEquals("Food should be consumed", 2, player1.getCurrentInventory().getFood());
 
@@ -124,9 +124,9 @@ public class PlayerTest {
     }
 
     @Test
-    public void testJSON() throws Exception {
+    public void JSONTest() throws Exception {
         Inventory invNorm1 = new Inventory(1, 5, 25, itemListNorm1);
-        Player player1 = new Player("123", "Bob", invNorm1);
+        Player player1 = new Player("Bob", invNorm1);
 
         // save to file
         File file = new File("player_test.json");
@@ -139,5 +139,14 @@ public class PlayerTest {
         assertEquals("Object loaded from JSON does not match original", player1, comparisonPlayer);
 
         file.delete();
+    }
+
+    @Test
+    public void uniqueIDTest() {
+        Inventory invNorm1 = new Inventory(1, 5, 25, itemListNorm1);
+        Player player1 = new Player("Bob", invNorm1);
+        Player player2 = new Player("Bob", invNorm1);
+
+        assertNotEquals("id should be unique", player1, player2);
     }
 }

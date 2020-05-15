@@ -15,31 +15,35 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 // holds metadata for each individual user of the app
 public class Player {
     // basic properties
-    private String id; // TODO id should be unique
+    private String id;
     private String displayName;
     private Inventory currentInventory;
 
+    // list of IDs that have been used
+    public static List<String> reservedIDs = new LinkedList<>();
+
     // display name can be set to id initially to be updated later
-    public Player (String id) {
-        this.id = id;
+    public Player () {
+        this.id = generateUUID(true);
         this.displayName = id;
         this.currentInventory = Inventory.defaultPlayerInventory();
     }
 
     // set display name with constructor
-    public Player (String id, String displayName) {
-        this (id);
+    public Player (String displayName) {
+        this ();
         this.displayName = displayName;
     }
 
     // create instance with preset inventory
-    public Player (String id, String displayName, Inventory currentInventory) {
-        this (id);
-        this.displayName = displayName;
+    public Player (String displayName, Inventory currentInventory) {
+        this (displayName);
         this.currentInventory = currentInventory;
     }
 
@@ -68,7 +72,32 @@ public class Player {
     }
 
     /*
-     * currentInventory management
+     * class methods
+     */
+
+    public static List<String> getReservedIDs() {
+        return reservedIDs;
+    }
+
+    public static void setReservedIDs(List<String> reservedIDs) {
+        Player.reservedIDs = reservedIDs;
+    }
+
+    // generates a new unique id and reserves it if isReserved
+    public static String generateUUID(boolean isReserved) {
+        String id = UUID.randomUUID().toString();
+
+        while (reservedIDs.contains(id))
+            id = UUID.randomUUID().toString();
+
+        if (isReserved)
+            reservedIDs.add(id);
+
+        return id;
+    }
+
+    /*
+     * instance methods
      */
 
     // set the contents of currentInventory to default
