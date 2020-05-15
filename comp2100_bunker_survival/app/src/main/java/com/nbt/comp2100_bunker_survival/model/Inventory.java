@@ -8,7 +8,7 @@ import com.nbt.comp2100_bunker_survival.model.items.Item;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedList;
 
 // holds information on basic resources and unique items.
@@ -93,6 +93,7 @@ public class Inventory {
     }
 
     public LinkedList<Item> getUniqueItems() {
+        sortUniqueItems();
         return uniqueItems;
     }
 
@@ -124,22 +125,6 @@ public class Inventory {
         this.value = calculateValue(this.food, this.scrapMetal, this.toiletPaper, this.uniqueItems);
     }
 
-    // constrained.
-    // returns the Item if uniqueItems size exceeds ITEMS_MAX, otherwise returns null
-    public Item addUniqueItem(Item itemToAdd) {
-        uniqueItems.add(itemToAdd);
-
-        LinkedList<Item> rtn = constrainUniqueItems(uniqueItems);
-        if (rtn.isEmpty())
-            return null;
-        else
-            return rtn.getLast();
-    }
-
-    public void removeUniqueItem(Item itemToRemove) {
-        uniqueItems.remove(itemToRemove);
-    }
-
     /*
      * class methods
      */
@@ -162,6 +147,26 @@ public class Inventory {
     /*
      * instance methods
      */
+
+    // constrained.
+    // returns the Item if uniqueItems size exceeds ITEMS_MAX, otherwise returns null
+    public Item addUniqueItem(Item itemToAdd) {
+        uniqueItems.add(itemToAdd);
+
+        LinkedList<Item> rtn = constrainUniqueItems(uniqueItems);
+        if (rtn.isEmpty())
+            return null;
+        else
+            return rtn.getLast();
+    }
+
+    public void removeUniqueItem(Item itemToRemove) {
+        uniqueItems.remove(itemToRemove);
+    }
+
+    public void sortUniqueItems() {
+        Collections.sort(uniqueItems);
+    }
 
     // maintain min and max limits on the size of an item list.
     // returns a list of items that were removed
@@ -223,7 +228,7 @@ public class Inventory {
             return (food == ((Inventory) obj).food &&
                     scrapMetal == ((Inventory) obj).scrapMetal &&
                     toiletPaper == ((Inventory) obj).toiletPaper &&
-                    uniqueItems.equals(((Inventory) obj).uniqueItems));
+                    getUniqueItems().equals(((Inventory) obj).getUniqueItems()));
         }
         else
             return false;
@@ -234,7 +239,7 @@ public class Inventory {
     public String toString() {
         StringBuilder uniqueItemsString = new StringBuilder();
         int count = 0;
-        for (Item item : uniqueItems) {
+        for (Item item : getUniqueItems()) {
             uniqueItemsString.append("[").append(item.toString()).append("]");
             if (count < uniqueItems.size() - 1)
                 uniqueItemsString.append(",\n\n");
