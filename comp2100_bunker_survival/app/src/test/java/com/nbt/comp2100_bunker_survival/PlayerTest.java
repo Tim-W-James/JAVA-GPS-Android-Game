@@ -8,6 +8,7 @@ import com.nbt.comp2100_bunker_survival.model.items.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import static org.junit.Assert.*;
@@ -120,5 +121,23 @@ public class PlayerTest {
 
         assertFalse(player1.consumeFood(5));
         assertEquals("Food should be consumed", 0, player1.getCurrentInventory().getFood());
+    }
+
+    @Test
+    public void testJSON() throws Exception {
+        Inventory invNorm1 = new Inventory(1, 5, 25, itemListNorm1);
+        Player player1 = new Player("123", "Bob", invNorm1);
+
+        // save to file
+        File file = new File("player_test.json");
+        file.delete();
+        player1.saveToJSONFile(file);
+
+        // load from file
+        Player comparisonPlayer = Player.loadFromJSONFile(file);
+
+        assertEquals("Object loaded from JSON does not match original", player1, comparisonPlayer);
+
+        file.delete();
     }
 }

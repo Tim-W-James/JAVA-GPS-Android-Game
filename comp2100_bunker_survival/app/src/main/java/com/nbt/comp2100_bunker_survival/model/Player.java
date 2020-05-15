@@ -3,14 +3,23 @@ package com.nbt.comp2100_bunker_survival.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import com.nbt.comp2100_bunker_survival.model.items.AbstractItemAdapter;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 
 // holds metadata for each individual user of the app
 public class Player {
     // basic properties
-    private String id;
+    private String id; // TODO id should be unique
     private String displayName;
     private Inventory currentInventory;
 
@@ -23,14 +32,13 @@ public class Player {
 
     // set display name with constructor
     public Player (String id, String displayName) {
-        this.id = id;
+        this (id);
         this.displayName = displayName;
-        this.currentInventory = Inventory.defaultPlayerInventory();
     }
 
     // create instance with preset inventory
     public Player (String id, String displayName, Inventory currentInventory) {
-        this.id = id;
+        this (id);
         this.displayName = displayName;
         this.currentInventory = currentInventory;
     }
@@ -137,6 +145,37 @@ public class Player {
         else
             return null;
     }
+
+    /*
+     * JSON (w/ gson)
+     */
+
+    public static Player loadFromJSONFile(File file) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
+        JsonReader jsonReader = null;
+        try {
+            jsonReader = new JsonReader(new FileReader(file));
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return gson.fromJson(jsonReader, Player.class);
+    }
+
+    public void saveToJSONFile(File file) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
+
+        try (FileWriter writer = new FileWriter(file)){
+            gson.toJson(this, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * override
+     */
 
     // two players are equal if they share the same basic properties,
     // and inventory contents are the same

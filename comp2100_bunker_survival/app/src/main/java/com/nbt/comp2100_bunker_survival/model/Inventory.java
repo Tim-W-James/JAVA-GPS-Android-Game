@@ -216,14 +216,14 @@ public class Inventory {
     }
 
     // two inventories are equal if they share the same number of basic resources,
-    // and if unique items are the same regardless of order
+    // and if unique items contains the same items
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Inventory) {
             return (food == ((Inventory) obj).food &&
                     scrapMetal == ((Inventory) obj).scrapMetal &&
                     toiletPaper == ((Inventory) obj).toiletPaper &&
-                    new HashSet<>(uniqueItems).equals(new HashSet<>(((Inventory) obj).uniqueItems)));
+                    uniqueItems.equals(((Inventory) obj).uniqueItems));
         }
         else
             return false;
