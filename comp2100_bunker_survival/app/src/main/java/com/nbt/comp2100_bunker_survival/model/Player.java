@@ -25,12 +25,9 @@ public class Player {
     private String displayName;
     private Inventory currentInventory;
 
-    // list of IDs that have been used
-    public static List<String> reservedIDs = new LinkedList<>();
-
     // display name can be set to id initially to be updated later
     public Player () {
-        this.id = generateUUID(true);
+        this.id = generateUUID();
         this.displayName = id;
         this.currentInventory = Inventory.defaultPlayerInventory();
     }
@@ -75,23 +72,9 @@ public class Player {
      * class methods
      */
 
-    public static List<String> getReservedIDs() {
-        return reservedIDs;
-    }
-
-    public static void setReservedIDs(List<String> reservedIDs) {
-        Player.reservedIDs = reservedIDs;
-    }
-
-    // generates a new unique id and reserves it if isReserved
-    public static String generateUUID(boolean isReserved) {
+    // generates a new unique id
+    public static String generateUUID() {
         String id = UUID.randomUUID().toString();
-
-        while (reservedIDs.contains(id))
-            id = UUID.randomUUID().toString();
-
-        if (isReserved)
-            reservedIDs.add(id);
 
         return id;
     }
