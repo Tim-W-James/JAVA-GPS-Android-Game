@@ -3,6 +3,7 @@ package com.nbt.comp2100_bunker_survival.activities;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -103,5 +104,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Will require pulling apart currentLatLng, and playerMarket.getPosition(), and calculating how far it should move over a number of steps
         playerMarker.setPosition(currentLatLng);
         circle.setCenter(currentLatLng);
+    }
+
+    public void inventoryButton() {
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        startActivity(intent);
     }
 }
