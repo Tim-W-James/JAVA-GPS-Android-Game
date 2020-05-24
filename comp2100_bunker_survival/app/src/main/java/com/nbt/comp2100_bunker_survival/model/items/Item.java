@@ -2,6 +2,8 @@ package com.nbt.comp2100_bunker_survival.model.items;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 // unique resources that are stored in a list in Inventories.
 // subclass defines the type of Item and it's function
 public abstract class Item implements Comparable{
@@ -27,6 +29,9 @@ public abstract class Item implements Comparable{
     public int getTradingValue() {
         return tradingValue;
     }
+
+    // returns a list of strings containing the properties of that item
+    public abstract List<String> getDetails();
 
     @Override
     public int compareTo(Object obj) {

@@ -3,6 +3,9 @@ package com.nbt.comp2100_bunker_survival.model.items;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // an Item that is used in combat
 public class Weapon extends Item {
     // rawPower indicates the base strength this item has in combat
@@ -15,6 +18,15 @@ public class Weapon extends Item {
 
     public int getRawPower() {
         return rawPower;
+    }
+
+    @Override
+    public List<String> getDetails() {
+        ArrayList<String> details = new ArrayList<String>();
+        details.add("Description: "+getDescription());
+        details.add("Trading Value: "+getTradingValue());
+        details.add("Raw Power: "+getRawPower());
+        return details;
     }
 
     // equal if properties are equal

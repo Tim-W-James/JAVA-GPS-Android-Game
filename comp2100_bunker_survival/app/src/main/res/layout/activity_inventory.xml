@@ -10,51 +10,64 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
         android:layout_marginTop="63dp"
-        android:layout_marginEnd="158dp"
-        android:text="TextView"
+        android:text="Your Inventory"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Your inventory:" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/foodText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="187dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="188dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText"
         tools:text="Food:" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/toiletPaperText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="165dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="14dp"
-        android:layout_marginEnd="166dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/foodText"
         tools:text="Toilet Paper:" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/scrapMetalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="14dp"
-        android:layout_marginEnd="168dp"
-        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toiletPaperText"
+        tools:text="Scrap Metal:" />
+
+    <TextView
+        android:id="@+id/inventoryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:text="Inventory:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrapMetalText"
+        tools:text="Inventory:" />
+
+    <ExpandableListView
+        android:id="@+id/itemList"
+        android:layout_width="385dp"
+        android:layout_height="352dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:divider="#D3D3D3"
+        android:dividerHeight="1dp"
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7"
-        tools:text="Scrap Metal" />
+        app:layout_constraintTop_toBottomOf="@+id/inventoryText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

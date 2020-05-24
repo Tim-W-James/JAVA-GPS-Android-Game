@@ -3,13 +3,19 @@ package com.nbt.comp2100_bunker_survival.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.nbt.comp2100_bunker_survival.model.items.Curiosity;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
+import com.nbt.comp2100_bunker_survival.model.items.Weapon;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 // holds information on basic resources and unique items.
 // can either be the Inventory of treasure or a player
@@ -19,7 +25,7 @@ public class Inventory {
     // for such inventories do not constrain
     private int food; // keeps the player alive
     private int scrapMetal; // currency
-    private int toiletPaper; // ?
+    private int toiletPaper;
     // items
     private LinkedList <Item> uniqueItems;
     // value is the total of all resources multiplied by respective values and trading value of items
@@ -63,7 +69,7 @@ public class Inventory {
     }
 
     // custom complex inventory constrained
-    public Inventory(int food, int scrapMetal, int toiletPaper, LinkedList <Item> uniqueItems, boolean isConstrained) {
+    public Inventory(int food, int scrapMetal, int toiletPaper, LinkedList<Item> uniqueItems, boolean isConstrained) {
         this(food, scrapMetal, toiletPaper, uniqueItems);
         if (isConstrained)
             constrainInventory();
@@ -74,6 +80,25 @@ public class Inventory {
     @NonNull
     public static Inventory defaultPlayerInventory() {
         return new Inventory(50, 25, 0);
+    }
+
+    // returns a sample inventory with items
+    public static Inventory getTestInventory() { // TODO remove: only for server test
+        Item weapon1 = new Weapon("Sting","Glows when goblins are near",101, 150);
+        Item weapon2 = new Weapon("Excalibur","Very shiny",355, 600);
+        Item weapon3 = new Weapon("Wooden Club","Primitive",5, 30);
+        Item curiosity1 = new Curiosity("NASA Mug","An old mug with a NASA logo",200, "Space");
+        Item curiosity2 = new Curiosity("Fidget Spinner","A relic of the past",200, "A Trash Bin");
+        Item curiosity3 = new Curiosity("Bottle Cap","Might hold some value",999, "A Vault");
+
+        LinkedList<Item> itemList1 = new LinkedList<Item>();
+        itemList1.add(weapon1);
+        itemList1.add(weapon2);
+        itemList1.add(weapon3);
+        itemList1.add(curiosity1);
+        itemList1.add(curiosity2);
+        itemList1.add(curiosity3);
+        return new Inventory(50, 25, 0, itemList1, true);
     }
 
     /*
@@ -171,7 +196,7 @@ public class Inventory {
     // maintain min and max limits on the size of an item list.
     // returns a list of items that were removed
     public LinkedList<Item> constrainUniqueItems(LinkedList<Item> items) {
-        LinkedList<Item> rtn = new LinkedList<>();
+        LinkedList<Item> rtn = new LinkedList<Item>();
         while (items.size() > ITEMS_MAX) {
             rtn.add(items.getLast());
             items.removeLast();
@@ -218,6 +243,22 @@ public class Inventory {
                 scrapMetal <= RESOURCE_MAX && scrapMetal >= RESOURCE_MIN &&
                 toiletPaper <= RESOURCE_MAX && toiletPaper >= RESOURCE_MIN &&
                 uniqueItems.size() <= ITEMS_MAX);
+    }
+
+    public List<String> getItemNames() {
+        ArrayList<String> names = new ArrayList<String>();
+        for (Item item : uniqueItems) {
+            names.add(item.getName());
+        }
+        return names;
+    }
+
+    public Map<String, List<String>> getItemDetails() {
+        Map<String, List<String>> details = new HashMap<String, List<String>>();
+        for (Item item : uniqueItems) {
+            details.put(item.getName(), item.getDetails());
+        }
+        return details;
     }
 
     // two inventories are equal if they share the same number of basic resources,

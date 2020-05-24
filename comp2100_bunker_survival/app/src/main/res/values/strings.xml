@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Bunker Survival</string>
     <string name="title_activity_maps">Map</string>
+    <string name="textview">TextView</string>
+    <string name="inventory">Inventory</string>
+    <string name="center">Center</string>
+    <string name="collect_ntreasure">Collect\nTreasure</string>
+    <string name="view_ninventory">view\ninventory</string>
+    <string name="center_ncamera">center\ncamera</string>
 </resources>

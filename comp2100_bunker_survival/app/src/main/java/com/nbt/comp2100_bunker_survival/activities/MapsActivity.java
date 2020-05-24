@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -106,8 +107,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circle.setCenter(currentLatLng);
     }
 
-    public void inventoryButton() {
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+    public void inventoryButtonPressed(View view) {
+        Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
         startActivity(intent);
+    }
+
+    public void collectionButtonPressed(View view) {
+
+    }
+
+    public void centerButtonPressed(View view) {
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
     }
 }

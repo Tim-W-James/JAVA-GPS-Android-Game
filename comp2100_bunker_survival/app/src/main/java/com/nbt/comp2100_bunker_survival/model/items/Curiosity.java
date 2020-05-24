@@ -7,6 +7,9 @@ import androidx.annotation.Nullable;
 
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // an Item that has an interesting lore description,
 // along with location and generally has large value
 public class Curiosity extends Item {
@@ -30,6 +33,15 @@ public class Curiosity extends Item {
 
     public String getLocationFound() {
         return locationFound;
+    }
+
+    @Override
+    public List<String> getDetails() {
+        ArrayList<String> details = new ArrayList<String>();
+        details.add("Description: "+getDescription());
+        details.add("Trading Value: "+getTradingValue());
+        details.add("Location Found: "+getLocationFound());
+        return details;
     }
 
     // equal if properties are equal
