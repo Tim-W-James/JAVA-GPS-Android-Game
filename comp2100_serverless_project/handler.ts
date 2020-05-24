@@ -1,6 +1,6 @@
 import { Handler } from 'aws-lambda';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { DynamoDB } from 'aws-sdk'
+import { DynamoDB } from 'aws-sdk';
 
 const dynamoDB = new DynamoDB.DocumentClient({region: 'ap-southeast-2'});
 
