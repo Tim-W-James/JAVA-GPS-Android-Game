@@ -245,7 +245,9 @@ public class Inventory {
                 uniqueItems.size() <= ITEMS_MAX);
     }
 
+    // returns a list containing all item names
     public List<String> getItemNames() {
+        sortUniqueItems();
         ArrayList<String> names = new ArrayList<String>();
         for (Item item : uniqueItems) {
             names.add(item.getName());
@@ -253,7 +255,9 @@ public class Inventory {
         return names;
     }
 
+    // returns a map with item names as keys and a list of properties as values
     public Map<String, List<String>> getItemDetails() {
+        sortUniqueItems();
         Map<String, List<String>> details = new HashMap<String, List<String>>();
         for (Item item : uniqueItems) {
             details.put(item.getName(), item.getDetails());
