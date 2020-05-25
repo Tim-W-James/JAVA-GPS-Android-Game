@@ -24,9 +24,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 import com.nbt.comp2100_bunker_survival.R;
+import com.nbt.comp2100_bunker_survival.model.Treasure;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,12 +42,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Circle circle;
     private float x = 0;
     private LatLng currentLatLang;
+
     private int treasureInterval = 5000; // delay for generating treasure
     private Handler treasureHandler;
     private int treasureCount = 0;
     private int treasureMaxCount = 6;
     private int treasureMinDist = 30; // min distance for generating treasure
     private int treasureMaxDist = 150; // min distance for generating treasure
+    private Map<Marker, Treasure> treasureInstances;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         treasureHandler = new Handler();
+        treasureInstances = new HashMap<Marker, Treasure>();
         startGeneratingTreasure();
     }
 
@@ -118,6 +125,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Will require pulling apart currentLatLng, and playerMarket.getPosition(), and calculating how far it should move over a number of steps
         playerMarker.setPosition(currentLatLng);
         circle.setCenter(currentLatLng);
+
+        System.out.println(currentLatLng.latitude+ " " + currentLatLng.longitude); // TODO remove debug
     }
 
     public void inventoryButtonPressed(View view) {
@@ -133,23 +142,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
     }
 
+    public void addNewTreasure() {
+        Random rand = new Random();
+        int vertOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
+        if (rand.nextBoolean()) vertOffset = -vertOffset;
+        int horizOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
+        if (rand.nextBoolean()) horizOffset = -horizOffset;
+        LatLng loc = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
 
-    public void generateNewTreasure() {
-        // TODO only generate up to max capacity
-        // TODO distribute evenly
-        // TODO generate a distance away from player
+        Treasure t = Treasure.generateTreasure(loc);
+        Marker m;
+        m = mMap.addMarker(new MarkerOptions()
+                .position(loc)
+                .title("Hello world"));
+        treasureInstances.put(m, t);
+    }
+
+    public void checkForGeneration() {
+        // TODO improve distribution
         // TODO remove treasure that is too far away
         if (currentLatLang != null) {
-            if (treasureCount <= treasureMaxCount) {
-                Random rand = new Random();
-                int vertOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
-                int horizOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
-                LatLng result = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(result)
-                        .title("Hello world"));
+            if (treasureCount < treasureMaxCount) { // generate new treasure
+                addNewTreasure();
                 treasureCount++;
+            }
+            else { // check if there is a treasure which is too far from the player and should be removed
+                Set<Marker> keys = treasureInstances.keySet(); // get the set of keys
+                for (Marker m : keys) {
+                    Treasure t = treasureInstances.get(m);
+
+                    if (SphericalUtil.computeDistanceBetween(
+                            new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                            > (treasureMaxDist+(treasureMaxDist*0.5))) {
+                        treasureInstances.remove(m); // remove treasure from list
+                        m.remove(); // remove marker from map
+
+                        addNewTreasure(); // create replacement treasure
+                        break;
+                    }
+                }
             }
         }
     }
@@ -158,7 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void run() {
             try {
-                generateNewTreasure();
+                checkForGeneration();
             } finally {
                 treasureHandler.postDelayed(treasureStatus, treasureInterval);
             }
