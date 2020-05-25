@@ -80,7 +80,7 @@ public class Treasure {
         return seed;
     }
 
-    // factory method that returns a new inventory instance with default player inventory values.
+    // factory method that returns a treasure object with a randomly generated inventory
     // generates a random seed
     @NonNull
     public static Treasure generateTreasure(double latitude, double longitude) {
@@ -99,26 +99,60 @@ public class Treasure {
         return generateTreasure(location.latitude, location.longitude);
     }
 
-    // factory method that returns a new inventory instance with default player inventory values.
+    // factory method that returns a treasure object with an generated inventory
     // uses inputted seed
-    // TODO treasure types
-    // TODO resource distribution
-    // TODO unique item generation
+    // TODO improve resource distribution
     @NonNull
     public static Treasure generateTreasure(double latitude, double longitude, long seed) {
         Random rand = new Random(seed);
+        Treasure treasure;
 
-        Inventory inventory = new Inventory(
-                rand.nextInt(FOOD_MAX)+FOOD_MIN,
-                rand.nextInt(SCRAPMETAL_MAX)+SCRAPMETAL_MIN,
-                rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN);
-        Item item1 = new Weapon("TestWeapon","TestDesc",0,0);
-        Item item2 = new Curiosity("TestCuriosity","TestDesc",0, latitude, longitude);
-        inventory.addUniqueItem(item1);
-        inventory.addUniqueItem(item2);
+        int type = rand.nextInt(5);
+        switch (type) {
+            // item cache
+            case 0:
+                Inventory inv0 = new Inventory(
+                        0,
+                        0,
+                        0);
+                inv0.addUniqueItem(generateItem(latitude, longitude, seed));
+                return new Treasure("Item Cache", latitude, longitude, seed, inv0);
 
+            // food cache
+            case 1:
+                Inventory inv1 = new Inventory(
+                        rand.nextInt(FOOD_MAX)+FOOD_MIN,
+                        0,
+                        0);
+                inv1.addUniqueItem(generateItem(latitude, longitude, seed));
+                return new Treasure("Food Cache", latitude, longitude, seed, inv1);
 
-        return new Treasure("Test Treasure", latitude, longitude, seed, inventory);
+            // scrap metal cache
+            case 2:
+                Inventory inv2 = new Inventory(
+                        0,
+                        rand.nextInt(SCRAPMETAL_MAX)+SCRAPMETAL_MIN,
+                        0);
+                inv2.addUniqueItem(generateItem(latitude, longitude, seed));
+                return new Treasure("Scrap Metal Cache", latitude, longitude, seed, inv2);
+
+            // toilet paper cache
+            case 3:
+                Inventory inv3 = new Inventory(
+                        0,
+                        0,
+                        rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN);
+                inv3.addUniqueItem(generateItem(latitude, longitude, seed));
+                return new Treasure("Toilet Paper Cache", latitude, longitude, seed, inv3);
+
+            // large resource cache
+            default:
+                Inventory inv4 = new Inventory(
+                        rand.nextInt(FOOD_MAX)+FOOD_MIN,
+                        rand.nextInt(SCRAPMETAL_MAX)+SCRAPMETAL_MIN,
+                        rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN);
+                return new Treasure("Large Resource Cache", latitude, longitude, seed, inv4);
+        }
     }
     // also accepts Location input
     @NonNull
@@ -129,6 +163,33 @@ public class Treasure {
     @NonNull
     public static Treasure generateTreasure(LatLng location, long seed) {
         return generateTreasure(location.latitude, location.longitude, seed);
+    }
+
+    // picks a random item based on the seed
+    public static Item generateItem(double latitude, double longitude, long seed) {
+        Random rand = new Random(seed);
+        int i = rand.nextInt(8);
+
+        switch (i) {
+            case 0:
+                return new Weapon("Sting","Glows when goblins are near",101, 150);
+            case 1:
+                return new Weapon("Excalibur","Very shiny",355, 600);
+            case 2:
+                return new Weapon("Wooden Club","Primitive",5, 30);
+            case 3:
+                return new Curiosity("NASA Mug","An old mug with a NASA logo",200, locationToSimpleString(latitude, longitude));
+            case 4:
+                return new Curiosity("Fidget Spinner","A relic of the past",200, locationToSimpleString(latitude, longitude));
+            case 5:
+                return new Curiosity("Bottle Cap","Might hold some value",999, locationToSimpleString(latitude, longitude));
+            case 6:
+                return new Weapon("Mysterious Axe","???",rand.nextInt(980)+10, rand.nextInt(980)+10);
+            case 7:
+                return new Curiosity("Abstract Object","How does this exist?",rand.nextInt(980)+10, locationToSimpleString(latitude, longitude));
+            default:
+                return new Weapon("Rock","Versatile",2, 10);
+        }
     }
 
     // returns a String of a location input of latitude and longitude
