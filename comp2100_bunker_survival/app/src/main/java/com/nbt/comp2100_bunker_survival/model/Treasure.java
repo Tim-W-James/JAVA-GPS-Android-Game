@@ -5,6 +5,7 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
 import com.nbt.comp2100_bunker_survival.model.items.Weapon;
 
@@ -38,6 +39,10 @@ public class Treasure {
     // also accepts Location input
     public Treasure(String name, Location location, long seed) {
         this(name, location.getLatitude(), location.getLongitude(), seed);
+    }
+    // also accepts LatLng input
+    public Treasure(String name, LatLng location, long seed) {
+        this(name, location.latitude, location.longitude, seed);
     }
 
     // constructor for input treasure inventory
@@ -78,6 +83,11 @@ public class Treasure {
     public static Treasure generateTreasure(Location location) {
         return generateTreasure(location.getLatitude(), location.getLongitude());
     }
+    // also accepts LatLng input
+    @NonNull
+    public static Treasure generateTreasure(LatLng location) {
+        return generateTreasure(location.latitude, location.longitude);
+    }
 
     // factory method that returns a new inventory instance with default player inventory values.
     // uses inputted seed
@@ -100,6 +110,11 @@ public class Treasure {
     public static Treasure generateTreasure(Location location, long seed) {
         return generateTreasure(location.getLatitude(), location.getLongitude(), seed);
     }
+    // also accepts LatLng input
+    @NonNull
+    public static Treasure generateTreasure(LatLng location, long seed) {
+        return generateTreasure(location.latitude, location.longitude, seed);
+    }
 
     // returns a String of a location input of latitude and longitude
     public static String locationToSimpleString(double latitude, double longitude) {
@@ -108,6 +123,10 @@ public class Treasure {
     // also accepts Location input
     public static String locationToSimpleString(Location location) {
         return locationToSimpleString(location.getLatitude(), location.getLongitude());
+    }
+    // also accepts LatLng input
+    public static String locationToSimpleString(LatLng location) {
+        return locationToSimpleString(location.latitude, location.longitude);
     }
 
     @Override

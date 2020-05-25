@@ -5,6 +5,7 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ public class Curiosity extends Item {
         this.locationFound = Treasure.locationToSimpleString(latitude, longitude);
     }
     public Curiosity(String name, String description, int tradingValue, Location locationFound) {
+        super(name, description, tradingValue);
+        this.locationFound = Treasure.locationToSimpleString(locationFound);
+    }
+    public Curiosity(String name, String description, int tradingValue, LatLng locationFound) {
         super(name, description, tradingValue);
         this.locationFound = Treasure.locationToSimpleString(locationFound);
     }

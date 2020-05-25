@@ -22,9 +22,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 import com.nbt.comp2100_bunker_survival.R;
 
 import java.util.Objects;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,6 +37,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker playerMarker;
     private Circle circle;
     private float x = 0;
+    private LatLng currentLatLang;
+    private int treasureInterval = 5000; // delay for generating treasure
+    private Handler treasureHandler;
+    private int treasureCount = 0;
+    private int treasureMaxCount = 6;
+    private int treasureMinDist = 30; // min distance for generating treasure
+    private int treasureMaxDist = 150; // min distance for generating treasure
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +54,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        treasureHandler = new Handler();
+        startGeneratingTreasure();
     }
 
     @Override
@@ -97,7 +109,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Location currentLocation = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(new Criteria(), false));
-        LatLng currentLatLng = new LatLng(currentLocation.getLatitude() + x,currentLocation.getLongitude());
+        LatLng currentLatLng;
+        this.currentLatLang = currentLatLng = new LatLng(currentLocation.getLatitude() + x,currentLocation.getLongitude());
 
         mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng), 500, null);
 
@@ -118,5 +131,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void centerButtonPressed(View view) {
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
+    }
+
+
+    public void generateNewTreasure() {
+        // TODO only generate up to max capacity
+        // TODO distribute evenly
+        // TODO generate a distance away from player
+        // TODO remove treasure that is too far away
+        if (currentLatLang != null) {
+            if (treasureCount <= treasureMaxCount) {
+                Random rand = new Random();
+                int vertOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
+                int horizOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
+                LatLng result = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(result)
+                        .title("Hello world"));
+                treasureCount++;
+            }
+        }
+    }
+
+    Runnable treasureStatus = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                generateNewTreasure();
+            } finally {
+                treasureHandler.postDelayed(treasureStatus, treasureInterval);
+            }
+        }
+    };
+
+    void startGeneratingTreasure() {
+        treasureStatus.run();
+    }
+
+    void stopGeneratingTreasure() {
+        treasureHandler.removeCallbacks(treasureStatus);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopGeneratingTreasure();
     }
 }
