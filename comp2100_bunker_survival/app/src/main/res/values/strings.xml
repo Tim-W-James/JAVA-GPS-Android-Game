@@ -6,5 +6,5 @@
     <string name="center">Center</string>
     <string name="collect_ntreasure">Collect\nTreasure</string>
     <string name="view_ninventory">view\ninventory</string>
-    <string name="center_ncamera">center\ncamera</string>
+    <string name="center_nview">center\nview</string>
 </resources>

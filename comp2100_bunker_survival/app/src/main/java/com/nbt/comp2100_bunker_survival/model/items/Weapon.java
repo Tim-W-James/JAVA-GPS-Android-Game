@@ -1,5 +1,8 @@
 package com.nbt.comp2100_bunker_survival.model.items;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -47,5 +50,35 @@ public class Weapon extends Item {
     public String toString() {
         return super.toString()+
                 "\nRaw Power: "+rawPower;
+    }
+
+    // parcel methods
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(getName());
+        parcel.writeString(getDescription());
+        parcel.writeInt(getTradingValue());
+        parcel.writeInt(getRawPower());
+    }
+
+    public static final Parcelable.Creator<Weapon> CREATOR
+            = new Parcelable.Creator<Weapon>() {
+        public Weapon createFromParcel(Parcel in) {
+            return new Weapon(in);
+        }
+
+        public Weapon[] newArray(int size) {
+            return new Weapon[size];
+        }
+    };
+
+    private Weapon(Parcel in) {
+        this (in.readString(), in.readString(), in.readInt(), in.readInt());
     }
 }

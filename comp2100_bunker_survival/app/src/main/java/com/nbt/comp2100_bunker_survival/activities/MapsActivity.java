@@ -12,7 +12,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,8 +27,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 import com.nbt.comp2100_bunker_survival.R;
+import com.nbt.comp2100_bunker_survival.model.Inventory;
+import com.nbt.comp2100_bunker_survival.model.Player;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private float collectionRaduis = 25;
     private float x = 0;
     private LatLng currentLatLang;
+    private Player player;
 
     private int treasureInterval = 5000; // delay for generating treasure
     private Handler treasureHandler;
@@ -66,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        player = Player.getTestPlayer(); // TODO fetch player data from server
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();
         startGeneratingTreasure();
@@ -119,6 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}, 10);
         }
 
+        // TODO check for null location on initial load
         locationManager.requestLocationUpdates(
                 locationManager.getBestProvider(new Criteria(), false), 0, 0, new LocationListener() {
                     @Override
@@ -146,18 +154,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Will require pulling apart currentLatLng, and playerMarket.getPosition(), and calculating how far it should move over a number of steps
         playerMarker.setPosition(currentLatLng);
         circle.setCenter(currentLatLng);
-
-        System.out.println(currentLatLng.latitude+ " " + currentLatLng.longitude); // TODO remove debug
     }
 
     public void inventoryButtonPressed(View view) {
         Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
+        intent.putExtra("header", "Your Inventory");
+        intent.putExtra("inventory", player.getCurrentInventory());
         startActivity(intent);
     }
 
     public void collectionButtonPressed(View view) {
         Set<Marker> keys = treasureInstances.keySet(); // get the set of keys
         List<Treasure> collectedTreasure = new LinkedList<Treasure>();
+
+        // find which treasure is close enough for collection
         for (Marker m : keys) {
             Treasure t = treasureInstances.get(m);
             if (SphericalUtil.computeDistanceBetween(
@@ -167,12 +177,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 collectedTreasure.add(t);
             }
         }
+
+        if (collectedTreasure.size() == 0) {
+            // throw toast if no treasure is nearby
+            Toast.makeText(getApplicationContext(),"No Treasure Nearby", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Inventory totalInventory = new Inventory();
+            for (Treasure t : collectedTreasure) {
+                // add inventories
+                totalInventory.addInventory(t.getTreasureInventory());
+                player.findTreasure(t);
+
+                // generate a new treasure to find
+                addNewTreasure();
+            }
+            // TODO send updated inventory to server
+
+            // pass found inventories to inventory activity
+            Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
+            intent.putExtra("header", "You Found Treasure!");
+            intent.putExtra("inventory", totalInventory);
+            startActivity(intent);
+        }
     }
 
+    // zooms & centers the view
     public void centerButtonPressed(View view) {
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
     }
 
+    // adds a new treasure to the map
     public void addNewTreasure() {
         Random rand = new Random();
         int vertOffset = rand.nextInt((treasureMaxDist - treasureMinDist) + 1) + treasureMinDist;
@@ -181,17 +216,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (rand.nextBoolean()) horizOffset = -horizOffset;
         LatLng loc = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
 
+        // pair marker with treasure
         Treasure t = Treasure.generateTreasure(loc);
-        Marker m;
-        m = mMap.addMarker(new MarkerOptions()
+        Marker m = mMap.addMarker(new MarkerOptions()
                 .position(loc)
-                .title("Hello world"));
+                .title(t.getName()));
+        //TODO - set the treasure Icon
+        //m.setIcon();
         treasureInstances.put(m, t);
     }
 
+    // distribute treasure
     public void checkForGeneration() {
         // TODO improve distribution
-        // TODO remove treasure that is too far away
         if (currentLatLang != null) {
             if (treasureCount < treasureMaxCount) { // generate new treasure
                 addNewTreasure();
@@ -215,7 +252,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
     Runnable treasureStatus = new Runnable() {
         @Override
         public void run() {
@@ -226,11 +262,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     };
-
     void startGeneratingTreasure() {
         treasureStatus.run();
     }
-
     void stopGeneratingTreasure() {
         treasureHandler.removeCallbacks(treasureStatus);
     }

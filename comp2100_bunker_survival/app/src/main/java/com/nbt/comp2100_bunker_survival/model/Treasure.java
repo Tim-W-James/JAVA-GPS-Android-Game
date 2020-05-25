@@ -6,9 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.nbt.comp2100_bunker_survival.model.items.Curiosity;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
 import com.nbt.comp2100_bunker_survival.model.items.Weapon;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 // an instance of Treasure to be spawned on the map
@@ -70,6 +72,14 @@ public class Treasure {
         return longitude;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public long getSeed() {
+        return seed;
+    }
+
     // factory method that returns a new inventory instance with default player inventory values.
     // generates a random seed
     @NonNull
@@ -97,12 +107,17 @@ public class Treasure {
     @NonNull
     public static Treasure generateTreasure(double latitude, double longitude, long seed) {
         Random rand = new Random(seed);
-        Item item = new Weapon("TestWeapon","TestDesc",0,0);
+
         Inventory inventory = new Inventory(
                 rand.nextInt(FOOD_MAX)+FOOD_MIN,
                 rand.nextInt(SCRAPMETAL_MAX)+SCRAPMETAL_MIN,
-                rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN,
-                item);
+                rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN);
+        Item item1 = new Weapon("TestWeapon","TestDesc",0,0);
+        Item item2 = new Curiosity("TestCuriosity","TestDesc",0, latitude, longitude);
+        inventory.addUniqueItem(item1);
+        inventory.addUniqueItem(item2);
+
+
         return new Treasure("Test Treasure", latitude, longitude, seed, inventory);
     }
     // also accepts Location input
@@ -118,7 +133,8 @@ public class Treasure {
 
     // returns a String of a location input of latitude and longitude
     public static String locationToSimpleString(double latitude, double longitude) {
-        return ("Latitude: "+latitude+", Longitude: "+longitude);
+        DecimalFormat twoDP = new DecimalFormat("#.##");
+        return ("["+twoDP.format(latitude)+", "+twoDP.format(longitude)+"]");
     }
     // also accepts Location input
     public static String locationToSimpleString(Location location) {

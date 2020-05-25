@@ -1,12 +1,14 @@
 package com.nbt.comp2100_bunker_survival.model.items;
 
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
 
 // unique resources that are stored in a list in Inventories.
 // subclass defines the type of Item and it's function
-public abstract class Item implements Comparable{
+public abstract class Item implements Parcelable, Comparable {
     // basic properties
     private String name;
     private String description;

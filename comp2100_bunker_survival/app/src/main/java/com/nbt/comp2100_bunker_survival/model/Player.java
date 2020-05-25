@@ -44,6 +44,11 @@ public class Player {
         this.currentInventory = currentInventory;
     }
 
+    // returns a sample player with filled inventory
+    public static Player getTestPlayer() {
+        return new Player("Bob", Inventory.getTestInventory());
+    }
+
     /*
      * get methods
      */

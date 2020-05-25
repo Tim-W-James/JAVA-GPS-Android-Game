@@ -1,6 +1,8 @@
 package com.nbt.comp2100_bunker_survival.model.items;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,5 +69,35 @@ public class Curiosity extends Item {
     public String toString() {
         return super.toString()+
                 "\nLocation Found: "+locationFound;
+    }
+
+    // parcel methods
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(getName());
+        parcel.writeString(getDescription());
+        parcel.writeInt(getTradingValue());
+        parcel.writeString(getLocationFound());
+    }
+
+    public static final Parcelable.Creator<Curiosity> CREATOR
+            = new Parcelable.Creator<Curiosity>() {
+        public Curiosity createFromParcel(Parcel in) {
+            return new Curiosity(in);
+        }
+
+        public Curiosity[] newArray(int size) {
+            return new Curiosity[size];
+        }
+    };
+
+    private Curiosity(Parcel in) {
+        this (in.readString(), in.readString(), in.readInt(), in.readString());
     }
 }

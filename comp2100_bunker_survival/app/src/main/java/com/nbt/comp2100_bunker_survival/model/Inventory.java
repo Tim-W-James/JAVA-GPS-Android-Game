@@ -1,5 +1,8 @@
 package com.nbt.comp2100_bunker_survival.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -19,7 +22,7 @@ import java.util.Map;
 
 // holds information on basic resources and unique items.
 // can either be the Inventory of treasure or a player
-public class Inventory {
+public class Inventory implements Parcelable {
     // basic resources.
     // note that negative values can be used for subtracting from another inventory,
     // for such inventories do not constrain
@@ -169,6 +172,15 @@ public class Inventory {
         return Math.min(Math.max(count, RESOURCE_MIN), RESOURCE_MAX);
     }
 
+    // return a list of inventories added together
+    public static Inventory totalInventories(List<Inventory> inventories) {
+        Inventory rtn = new Inventory();
+        for (Inventory i : inventories) {
+            rtn.addInventory(i);
+        }
+        return rtn;
+    }
+
     /*
      * instance methods
      */
@@ -296,5 +308,36 @@ public class Inventory {
                 "\nToilet Paper: "+toiletPaper+
                 "\nValue: "+value+
                 "\n\n==\nUnique Items:\n==\n\n"+uniqueItemsString;
+    }
+
+    // parcel methods
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(getFood());
+        parcel.writeInt(getScrapMetal());
+        parcel.writeInt(getToiletPaper());
+        parcel.writeList(getUniqueItems());
+    }
+
+    public static final Parcelable.Creator<Inventory> CREATOR
+            = new Parcelable.Creator<Inventory>() {
+        public Inventory createFromParcel(Parcel in) {
+            return new Inventory(in);
+        }
+
+        public Inventory[] newArray(int size) {
+            return new Inventory[size];
+        }
+    };
+
+    private Inventory(Parcel in) {
+        this (in.readInt(), in.readInt(), in.readInt());
+        in.readList(uniqueItems, Item.class.getClassLoader());
     }
 }

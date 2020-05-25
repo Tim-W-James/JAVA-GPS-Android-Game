@@ -24,7 +24,9 @@ public class InventoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
-        currentInventory = Inventory.getTestInventory(); // TODO fetch Inventory from server
+        TextView titleText = findViewById(R.id.titleText);
+        titleText.setText(getIntent().getStringExtra("header"));
+        currentInventory = getIntent().getParcelableExtra("inventory");
         initializeInventory(currentInventory);
     }
 
@@ -32,8 +34,12 @@ public class InventoryActivity extends AppCompatActivity {
         finish();
     }
 
-    public void initializeInventory(Inventory inventory) {
+    public void backButtonPressed(View view) {
+        finish();
+    }
 
+    // initializes the text fields and item list for the inventory
+    public void initializeInventory(Inventory inventory) {
         TextView foodText = findViewById(R.id.foodText);
         String foodContent = "Food: "+inventory.getFood();
         foodText.setText(foodContent);
