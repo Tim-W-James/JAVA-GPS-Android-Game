@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,9 @@ import com.nbt.comp2100_bunker_survival.R;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -40,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private Marker playerMarker;
     private Circle circle;
+    private float collectionRaduis = 25;
     private float x = 0;
     private LatLng currentLatLang;
 
@@ -76,7 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO - You can add a tag to the circle, which means that you can check when you pick something up if it is in the circle
         circle = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(0, 0))
-                .radius(25)
+                .radius(collectionRaduis)
                 .strokeColor(Color.argb(100, 0, 0, 255))
                 .fillColor(Color.argb(40, 0, 0, 255)));
 
@@ -114,6 +119,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}, 10);
         }
 
+        locationManager.requestLocationUpdates(
+                locationManager.getBestProvider(new Criteria(), false), 0, 0, new LocationListener() {
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                    }
+                    @Override
+                    public void onProviderEnabled(String provider) {
+                    }
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                    }
+                    @Override
+                    public void onLocationChanged(final Location location) {
+                    }
+                });
+        //locationManager.requestLocationUpdates();
         Location currentLocation = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(new Criteria(), false));
         LatLng currentLatLng;
@@ -135,7 +156,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void collectionButtonPressed(View view) {
-
+        Set<Marker> keys = treasureInstances.keySet(); // get the set of keys
+        List<Treasure> collectedTreasure = new LinkedList<Treasure>();
+        for (Marker m : keys) {
+            Treasure t = treasureInstances.get(m);
+            if (SphericalUtil.computeDistanceBetween(
+                    new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                    <= (collectionRaduis)) {
+                m.remove();
+                collectedTreasure.add(t);
+            }
+        }
     }
 
     public void centerButtonPressed(View view) {
