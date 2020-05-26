@@ -50,7 +50,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker playerMarker;
     private Circle circle;
     private float collectionRaduis = 25;
-    private float x = 0;
     private LatLng currentLatLang;
     private Player player;
 
@@ -121,9 +120,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void updateLocation(){
         //Checking if the app has permission to use location information
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}, 10);
+                || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 10);
+            return;
+        } else if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.INTERNET}, 10);
+            return;
         }
 
         // TODO check for null location on initial load
@@ -142,18 +144,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(final Location location) {
                     }
                 });
-        //locationManager.requestLocationUpdates();
-        Location currentLocation = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(new Criteria(), false));
-        LatLng currentLatLng;
-        this.currentLatLang = currentLatLng = new LatLng(currentLocation.getLatitude() + x,currentLocation.getLongitude());
+        Location currentLocation = locationManager.getLastKnownLocation(
+                locationManager.getBestProvider(new Criteria(), false));
+        System.out.println(currentLocation);
+        if (currentLocation == null){
+            return;
+        }
+        this.currentLatLang = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng), 500, null);
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLang), 500, null);
 
         //TODO - move this in small increments so that it smoothly transitions over 500ms, the same as the camera above
         //Will require pulling apart currentLatLng, and playerMarket.getPosition(), and calculating how far it should move over a number of steps
-        playerMarker.setPosition(currentLatLng);
-        circle.setCenter(currentLatLng);
+        playerMarker.setPosition(currentLatLang);
+        circle.setCenter(currentLatLang);
     }
 
     public void inventoryButtonPressed(View view) {
