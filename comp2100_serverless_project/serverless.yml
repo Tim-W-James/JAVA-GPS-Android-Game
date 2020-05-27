@@ -55,10 +55,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
         AttributeDefinitions:
-          - AttributeName: user_id
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: user_id
+          - AttributeName: id
             KeyType: HASH    
         ProvisionedThroughput:
           ReadCapacityUnits: 1

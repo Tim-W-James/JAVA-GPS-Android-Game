@@ -5,11 +5,12 @@ import { DynamoDB } from 'aws-sdk';
 const dynamoDB = new DynamoDB.DocumentClient({region: 'ap-southeast-2'});
 
 const validInput = (data) =>{
-  if (typeof data['user_id'] != "string" 
-    || typeof data['username'] != "string" 
-    || typeof data['scrap'] != "number" 
-    || typeof data['food'] != "number" 
-    || typeof data['toilet_paper'] != "number"
+  if (typeof data['id'] != "string" 
+    || typeof data['displayName'] != "string" 
+    || typeof data['currentInventory']['food'] != "number" 
+    || typeof data['currentInventory']['scrapMetal'] != "number" 
+    || typeof data['currentInventory']['toiletPaper'] != "number"
+    || typeof data['currentInventory']['value'] != "number"
   ){
     return false;
   }
@@ -62,7 +63,7 @@ export const createUser: Handler = async (event, _context) => {
   const fetchParams = {
     TableName: process.env.DYNAMODB_TABLE,
     Key : {
-      user_id: data['user_id']
+      id: data['id']
       }
   };
 
@@ -86,11 +87,15 @@ export const createUser: Handler = async (event, _context) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
-      user_id: data['user_id'],
-      username: data['username'],
-      scrap: data['scrap'],
-      food: data['food'],
-      toilet_paper: data['toilet_paper'],
+      id: data['id'],
+      displayName: data['displayName'],
+      currentInventory: {
+        food: data['currentInventory']['food'],
+        scrapMetal: data['currentInventory']['scrapMetal'],
+        toiletPaper: data['currentInventory']['toiletPaper'],
+        uniqueItems: data['currentInventory']['uniqueItems'],
+        value: data['currentInventory']['value'],
+      }
     },
   };
 
@@ -132,7 +137,7 @@ export const modifyUser: Handler = async (event, _context) => {
   const fetchParams = {
     TableName: process.env.DYNAMODB_TABLE,
     Key : {
-      user_id: data['user_id']
+      id: data['id']
       }
   };
 
@@ -156,11 +161,15 @@ export const modifyUser: Handler = async (event, _context) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
-      user_id: data['user_id'],
-      username: data['username'],
-      scrap: data['scrap'],
-      food: data['food'],
-      toilet_paper: data['toilet_paper'],
+      id: data['id'],
+      displayName: data['displayName'],
+      currentInventory: {
+        food: data['currentInventory']['food'],
+        scrapMetal: data['currentInventory']['scrapMetal'],
+        toiletPaper: data['currentInventory']['toiletPaper'],
+        uniqueItems: data['currentInventory']['uniqueItems'],
+        value: data['currentInventory']['value'],
+      }
     },
   };
 
@@ -190,10 +199,10 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
     }
   }
 
-  const userId = event.headers['user_id'];
+  const id = event.headers['id'];
 
   //Check if input data is valid
-  if (typeof userId != "string"){
+  if (typeof id != "string"){
     return {
       statusCode: 400,
       body: 'Malformed data.',
@@ -203,7 +212,7 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
   const fetchParams = {
     TableName: process.env.DYNAMODB_TABLE,
     Key : {
-      user_id: userId
+      id: id
       }
   };
 
