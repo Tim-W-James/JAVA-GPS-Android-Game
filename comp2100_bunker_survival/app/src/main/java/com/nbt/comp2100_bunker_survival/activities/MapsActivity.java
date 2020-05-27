@@ -1,11 +1,16 @@
 package com.nbt.comp2100_bunker_survival.activities;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,6 +25,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -221,14 +228,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng loc = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
 
         // pair marker with treasure
+
         Treasure t = Treasure.generateTreasure(loc);
         Marker m = mMap.addMarker(new MarkerOptions()
                 .position(loc)
+                .icon(generateBitmapDescriptorFromRes(this,R.drawable.ic_food_foreground))
                 .title(t.getName()));
         //TODO - set the treasure Icon
         //m.setIcon();
         treasureInstances.put(m, t);
     }
+
+    // Util method I'm using for testing
+    // https://android.jlelse.eu/the-danger-of-using-vector-drawables-5485b2a035fe
+    // Cause I decided to make the icons SVGs
+    public static BitmapDescriptor generateBitmapDescriptorFromRes(
+            Context context, int resId) {
+        Drawable drawable = ContextCompat.getDrawable(context, resId);
+        drawable.setBounds(
+                0,
+                0,
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 
     // distribute treasure
     public void checkForGeneration() {
