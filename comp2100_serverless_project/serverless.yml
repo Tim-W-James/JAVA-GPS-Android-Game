@@ -25,7 +25,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource: "*"
 
 functions:
   createUser:
@@ -45,7 +45,13 @@ functions:
     events:
       - http:
           method: get
-          path: getUserInfo        
+          path: getUserInfo
+  getTopFive:
+    handler: handler.getTopFive
+    events:
+      - http:
+          method: get
+          path: getTopFive                
           
           
 resources:
@@ -57,9 +63,27 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: value
+            AttributeType: N  
+          - AttributeName: GSI
+            AttributeType: S  
         KeySchema:
           - AttributeName: id
-            KeyType: HASH    
+            KeyType: HASH   
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1           
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5      
+        GlobalSecondaryIndexes:
+        - IndexName: myGSI
+          KeySchema:
+          - AttributeName: GSI
+            KeyType: HASH
+          - AttributeName: value
+            KeyType: RANGE  
+          Projection:
+            NonKeyAttributes:
+            - displayName
+            ProjectionType: INCLUDE        
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5            

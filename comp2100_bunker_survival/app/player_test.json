@@ -1,0 +1,40 @@
+{
+  "id": "6c332e01-1fda-4f19-90a8-1a5960ba6987",
+  "displayName": "Bob",
+  "currentInventory": {
+    "food": 1,
+    "scrapMetal": 5,
+    "toiletPaper": 25,
+    "uniqueItems": [
+      {
+        "type": "Weapon",
+        "properties": {
+          "rawPower": 600,
+          "name": "Excalibur",
+          "description": "Very shiny",
+          "tradingValue": 355
+        }
+      },
+      {
+        "type": "Weapon",
+        "properties": {
+          "rawPower": 150,
+          "name": "Sting",
+          "description": "Glows when goblins are near",
+          "tradingValue": 101
+        }
+      },
+      {
+        "type": "Weapon",
+        "properties": {
+          "rawPower": 30,
+          "name": "Wooden Club",
+          "description": "Primitive",
+          "tradingValue": 5
+        }
+      }
+    ],
+    "value": 492
+  },
+  "value": 0
+}

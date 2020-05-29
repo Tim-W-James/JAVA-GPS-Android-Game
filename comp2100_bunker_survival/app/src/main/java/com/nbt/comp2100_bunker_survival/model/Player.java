@@ -25,6 +25,10 @@ public class Player {
     private String displayName;
     private Inventory currentInventory;
 
+    //Values important to the database, here so that you can convert from database json into a player object
+    private int value;
+    private String GSI;
+
     // display name can be set to id initially to be updated later
     public Player () {
         this.id = generateUUID();

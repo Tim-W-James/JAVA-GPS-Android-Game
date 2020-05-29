@@ -2,6 +2,7 @@ package com.nbt.comp2100_bunker_survival.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
@@ -58,5 +59,10 @@ public class InventoryActivity extends AppCompatActivity {
         Map<String, List<String>> details = inventory.getItemDetails();
         ExpandableListAdapter expListAdapter = new ItemExpListAdapter(this, items, details);
         itemList.setAdapter(expListAdapter);
+    }
+
+    public void leaderboardButtonPressed(View view){
+        Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
+        startActivity(intent);
     }
 }

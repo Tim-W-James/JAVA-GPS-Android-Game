@@ -12,7 +12,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,17 +30,13 @@ import com.nbt.comp2100_bunker_survival.model.Inventory;
 import com.nbt.comp2100_bunker_survival.model.Player;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
-import java.io.Serializable;
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -146,8 +141,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
         Location currentLocation = locationManager.getLastKnownLocation(
                 locationManager.getBestProvider(new Criteria(), false));
-        System.out.println(currentLocation);
         if (currentLocation == null){
+            Toast.makeText(getApplicationContext(),"No Location data", Toast.LENGTH_SHORT).show();
             return;
         }
         this.currentLatLang = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());

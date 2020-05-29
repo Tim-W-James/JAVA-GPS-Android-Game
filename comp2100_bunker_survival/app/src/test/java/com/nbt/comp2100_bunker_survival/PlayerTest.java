@@ -137,8 +137,8 @@ public class PlayerTest {
         Player comparisonPlayer = Player.loadFromJSONFile(file);
 
         assertEquals("Object loaded from JSON does not match original", player1, comparisonPlayer);
-
-        file.delete();
+        System.out.println(file.getAbsoluteFile());
+        //file.delete();
     }
 
     @Test

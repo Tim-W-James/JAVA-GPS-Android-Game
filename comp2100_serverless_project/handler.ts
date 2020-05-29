@@ -95,7 +95,9 @@ export const createUser: Handler = async (event, _context) => {
         toiletPaper: data['currentInventory']['toiletPaper'],
         uniqueItems: data['currentInventory']['uniqueItems'],
         value: data['currentInventory']['value'],
-      }
+      },
+      value: data['currentInventory']['value'],
+      GSI: "ok"
     },
   };
 
@@ -146,7 +148,7 @@ export const modifyUser: Handler = async (event, _context) => {
     const result = await dynamoDB.get(fetchParams).promise();
     if (result.Item == null){
       return {
-        statusCode: 400,
+        statusCode: 404,
         body: 'That user does not exist.',
       }
     }
@@ -169,7 +171,9 @@ export const modifyUser: Handler = async (event, _context) => {
         toiletPaper: data['currentInventory']['toiletPaper'],
         uniqueItems: data['currentInventory']['uniqueItems'],
         value: data['currentInventory']['value'],
-      }
+      },
+      value: data['currentInventory']['value'],
+      GSI: "ok"
     },
   };
 
@@ -211,24 +215,70 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
 
   const fetchParams = {
     TableName: process.env.DYNAMODB_TABLE,
-    Key : {
-      id: id
-      }
+    KeyConditionExpression: 'id = :id',
+    ExpressionAttributeValues: {
+      ':id': id
+    }
   };
 
   //Fetch user information
   try {
-    const result = await dynamoDB.get(fetchParams).promise();
-    if (result.Item == null){
+    const result = await dynamoDB.query(fetchParams).promise();
+    if (result.Items[0] == null){
       return {
-        statusCode: 400,
+        statusCode: 404,
         body: 'That user does not exist.',
       }
     }
     return {
       statusCode: 200,
       body:  JSON.stringify({
-        result: result.Item,
+        result: result.Items[0],
+      }, null, 2),
+    }
+  } catch (e){
+    console.log(e.message)
+    return {
+      statusCode: 500,
+      body: 'Couldn\'t connect to the database.',
+    }
+  }
+}
+
+export const getTopFive: APIGatewayProxyHandler = async (event, _context) => {
+
+  const auth = event.headers['Authorization'];
+  if (!authenticate(auth)){
+    return {
+      statusCode: 401,
+      body: 'Bad authentication.',
+    }
+  }
+
+  const fetchParams = {
+    TableName: process.env.DYNAMODB_TABLE,
+    IndexName: "myGSI",
+    Limit: 5,
+    KeyConditionExpression: "GSI = :GSI",
+    ExpressionAttributeValues: {
+      ":GSI": "ok"
+  },
+    ScanIndexForward: false
+  };
+
+  //Fetch user information
+  try {
+    const result = await dynamoDB.query(fetchParams).promise();
+    if (result.Items == null){ 
+      return {
+        statusCode: 400,
+        body: 'No users exist!',
+      }
+    }
+    return {
+      statusCode: 200,
+      body:  JSON.stringify({
+        result: result.Items,
       }, null, 2),
     }
   } catch (e){
