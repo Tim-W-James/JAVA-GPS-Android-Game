@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -178,9 +179,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // TODO check for null location on initial load
+        // If there are no providers, loop instead of crashing
+        if (locationManager.getBestProvider(new Criteria(), false) == null) {
+            return;
+        }
+
         locationManager.requestLocationUpdates(
-                locationManager.getBestProvider(new Criteria(), false), 0, 0, new LocationListener() {
+                Objects.requireNonNull(locationManager.getBestProvider(new Criteria(), false)), 0, 0, new LocationListener() {
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
                     }
@@ -195,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
         Location currentLocation = locationManager.getLastKnownLocation(
-                locationManager.getBestProvider(new Criteria(), false));
+                Objects.requireNonNull(locationManager.getBestProvider(new Criteria(), false)));
         if (currentLocation == null){
             Toast.makeText(getApplicationContext(),"No Location data", Toast.LENGTH_SHORT).show();
             return;
@@ -232,11 +237,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // find which treasure is close enough for collection
         for (Marker m : keys) {
             Treasure t = treasureInstances.get(m);
-            if (SphericalUtil.computeDistanceBetween(
-                    new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
-                    <= (collectionRadius)) {
-                m.remove();
-                collectedTreasure.add(t);
+            if (t != null) {
+                if (SphericalUtil.computeDistanceBetween(
+                        new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                        <= (collectionRadius)) {
+                    m.remove();
+                    collectedTreasure.add(t);
+                }
             }
         }
 
@@ -337,14 +344,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Marker m : keys) {
                     Treasure t = treasureInstances.get(m);
 
-                    if (SphericalUtil.computeDistanceBetween(
-                            new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
-                            > (treasureMaxDist+(treasureMaxDist*0.5))) {
-                        treasureInstances.remove(m); // remove treasure from list
-                        m.remove(); // remove marker from map
+                    if (t != null) {
+                        if (SphericalUtil.computeDistanceBetween(
+                                new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                                > (treasureMaxDist+(treasureMaxDist*0.5))) {
+                            treasureInstances.remove(m); // remove treasure from list
+                            m.remove(); // remove marker from map
 
-                        addNewTreasure(); // create replacement treasure
-                        break;
+                            addNewTreasure(); // create replacement treasure
+                            break;
+                        }
                     }
                 }
             }
