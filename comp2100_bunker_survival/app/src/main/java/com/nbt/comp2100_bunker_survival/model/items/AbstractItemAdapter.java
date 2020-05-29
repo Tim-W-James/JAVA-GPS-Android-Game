@@ -3,7 +3,7 @@ package com.nbt.comp2100_bunker_survival.model.items;
 import com.google.gson.*;
 import java.lang.reflect.Type;
 
-// DERIVED FROM: https://ovaraksin.blogspot.com/2011/05/json-with-gson-and-abstract-classes.html //TODO ref in documentation
+// DERIVED FROM: https://ovaraksin.blogspot.com/2011/05/json-with-gson-and-abstract-classes.html
 // class to handle gson serialization/deserialization for abstract items
 public class AbstractItemAdapter implements JsonSerializer<Item>, JsonDeserializer<Item> {
     @Override

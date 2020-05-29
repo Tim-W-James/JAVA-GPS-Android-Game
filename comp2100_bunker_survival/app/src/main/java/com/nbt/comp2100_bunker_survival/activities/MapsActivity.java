@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -51,7 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private Marker playerMarker;
     private Circle circle;
-    private float collectionRaduis = 25;
+    private float collectionRadius = 25;
     private LatLng currentLatLang;
     private Player player;
 
@@ -98,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO - You can add a tag to the circle, which means that you can check when you pick something up if it is in the circle
         circle = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(0, 0))
-                .radius(collectionRaduis)
+                .radius(collectionRadius)
                 .strokeColor(Color.argb(100, 0, 0, 255))
                 .fillColor(Color.argb(40, 0, 0, 255)));
 
@@ -187,7 +188,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Treasure t = treasureInstances.get(m);
             if (SphericalUtil.computeDistanceBetween(
                     new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
-                    <= (collectionRaduis)) {
+                    <= (collectionRadius)) {
                 m.remove();
                 collectedTreasure.add(t);
             }
@@ -250,6 +251,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Cause I decided to make the icons SVGs
     public static BitmapDescriptor generateBitmapDescriptorFromRes(
             Context context, int resId) {
+
+        int height = 100;
+        int width = 100;
+
         Drawable drawable = ContextCompat.getDrawable(context, resId);
         drawable.setBounds(
                 0,
@@ -260,9 +265,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawable.getIntrinsicWidth(),
                 drawable.getIntrinsicHeight(),
                 Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
+
+//        Bitmap b = BitmapFactory.decodeResource(context, resId);
+        Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        return BitmapDescriptorFactory.fromBitmap(smallMarker);
+
+//        Canvas canvas = new Canvas(bitmap);
+//        drawable.draw(canvas);
+//        return BitmapDescriptorFactory.fromBitmap(bitmap);
+
     }
 
 

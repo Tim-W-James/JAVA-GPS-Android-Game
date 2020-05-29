@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextPassword);
 
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        intent.putExtra("PlayerData", (Parcelable) Player.getTestPlayer());
+//        intent.putExtra("PlayerData", (Parcelable) Player.getTestPlayer());
 
         if (username.toString().equalsIgnoreCase("test") &&
         password.toString().equals("1234")) {

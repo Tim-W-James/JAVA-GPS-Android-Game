@@ -12,7 +12,7 @@ import com.nbt.comp2100_bunker_survival.R;
 import java.util.List;
 import java.util.Map;
 
-// DERIVED FROM: https://www.journaldev.com/9942/android-expandablelistview-example-tutorial //TODO ref in documentation
+// DERIVED FROM: https://www.journaldev.com/9942/android-expandablelistview-example-tutorial
 // adapter for expanding lists for displaying the player's list of items
 public class ItemExpListAdapter extends BaseExpandableListAdapter {
 
