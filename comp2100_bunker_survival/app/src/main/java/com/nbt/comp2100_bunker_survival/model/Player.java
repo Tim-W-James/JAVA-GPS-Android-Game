@@ -171,29 +171,18 @@ public class Player {
      * JSON (w/ gson)
      */
 
-    public static Player loadFromJSONFile(File file) {
+    public static Player loadFromJSON(String string) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
-        JsonReader jsonReader = null;
-        try {
-            jsonReader = new JsonReader(new FileReader(file));
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return gson.fromJson(jsonReader, Player.class);
+        return gson.fromJson(string, Player.class);
     }
 
-    public void saveToJSONFile(File file) {
+    public String saveToJSON() {
         currentInventory.sortUniqueItems(); // sort first
+        currentInventory.getValue();
 
         Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
 
-        try (FileWriter writer = new FileWriter(file)){
-            gson.toJson(this, writer);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        return gson.toJson(this);
     }
 
     /*

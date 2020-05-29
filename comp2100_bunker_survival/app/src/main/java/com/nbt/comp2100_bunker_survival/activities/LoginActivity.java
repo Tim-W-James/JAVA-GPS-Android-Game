@@ -108,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         intent.putExtra("PlayerJson", substring);
+                        System.out.println(substring);
                         startActivity(intent);
                     } else {
                         throw new Exception();

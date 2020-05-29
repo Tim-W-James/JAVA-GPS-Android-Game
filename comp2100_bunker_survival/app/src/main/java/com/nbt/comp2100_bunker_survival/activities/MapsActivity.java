@@ -71,8 +71,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Handler treasureHandler;
     private int treasureCount = 0;
     private int treasureMaxCount = 6;
-    private int treasureMinDist = 30; // min distance for generating treasure
-    private int treasureMaxDist = 150; // min distance for generating treasure
+    private int treasureMinDist = 0; // min distance for generating treasure
+    private int treasureMaxDist = 25; // min distance for generating treasure // TODO FIX THIS
     private Map<Marker, Treasure> treasureInstances;
 
     /**
@@ -95,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String jsonPlayerString = intent.getStringExtra("PlayerJson");
         Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
         System.out.println(jsonPlayerString);
-        player = gson.fromJson(jsonPlayerString, Player.class);
+        player.loadFromJSON(jsonPlayerString);
 
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();
@@ -398,8 +398,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     connection.setRequestProperty("Authorization",authenticationHeader);
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type","application/json");
-                    Gson gson = new Gson();
-                    String jsonBody = gson.toJson(player);
+                    String jsonBody = player.saveToJSON();
                     byte[] outputInBytes = jsonBody.getBytes(StandardCharsets.UTF_8);
                     OutputStream os = connection.getOutputStream();
                     os.write( outputInBytes );

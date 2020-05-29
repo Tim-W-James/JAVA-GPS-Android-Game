@@ -131,10 +131,11 @@ public class PlayerTest {
         // save to file
         File file = new File("player_test.json");
         file.delete();
-        player1.saveToJSONFile(file);
+        System.out.println(player1.saveToJSON());
+        String s = player1.saveToJSON();
 
         // load from file
-        Player comparisonPlayer = Player.loadFromJSONFile(file);
+        Player comparisonPlayer = Player.loadFromJSON(s);
 
         assertEquals("Object loaded from JSON does not match original", player1, comparisonPlayer);
         System.out.println(file.getAbsoluteFile());
