@@ -263,13 +263,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addNewTreasure();
             }
 
-            updateDBPlayerData();
-
             // pass found inventories to inventory activity
             Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
             intent.putExtra("header", "You Found Treasure!");
             intent.putExtra("inventory", totalInventory);
             startActivity(intent);
+            updateDBPlayerData();
         }
     }
 
