@@ -40,6 +40,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                     String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
                     String authenticationHeader = "Basic " + encodedAuth;
                     connection.setRequestProperty("Authorization",authenticationHeader);
+                    connection.setRequestMethod("GET");
                     int responseCode = connection.getResponseCode();
                     if (responseCode == 200){
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((connection.getInputStream())));

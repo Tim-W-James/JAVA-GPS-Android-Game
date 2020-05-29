@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.google.maps.android.SphericalUtil;
 import com.nbt.comp2100_bunker_survival.R;
 import com.nbt.comp2100_bunker_survival.model.Inventory;
@@ -39,6 +40,11 @@ import com.nbt.comp2100_bunker_survival.model.Player;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -141,7 +147,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // TODO check for null location on initial load
         locationManager.requestLocationUpdates(
                 locationManager.getBestProvider(new Criteria(), false), 0, 0, new LocationListener() {
                     @Override
@@ -209,7 +214,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // generate a new treasure to find
                 addNewTreasure();
             }
-            // TODO send updated inventory to server
+
+            updateDBPlayerData();
 
             // pass found inventories to inventory activity
             Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
@@ -327,5 +333,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         stopGeneratingTreasure();
+    }
+
+
+    public void updateDBPlayerData(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try  {
+                    HttpURLConnection connection = null;
+                    URL object = new URL("https://antjma0ipl.execute-api.ap-southeast-2.amazonaws.com/dev/modifyUser");
+                    connection = (HttpURLConnection) object.openConnection();
+                    String auth = "comp2100BunkerAdmin:zvQzzetkP2vr45HR";
+                    String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+                    String authenticationHeader = "Basic " + encodedAuth;
+                    connection.setRequestProperty("Authorization",authenticationHeader);
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type","application/json");
+                    Gson gson = new Gson();
+                    String jsonBody = gson.toJson(player);
+                    byte[] outputInBytes = jsonBody.getBytes(StandardCharsets.UTF_8);
+                    OutputStream os = connection.getOutputStream();
+                    os.write( outputInBytes );
+                    os.close();
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == 200){
+                        //We are good, data is already updated locally so we don't need to do anything with this result
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"No Network Activity", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+        thread.start();
     }
 }
