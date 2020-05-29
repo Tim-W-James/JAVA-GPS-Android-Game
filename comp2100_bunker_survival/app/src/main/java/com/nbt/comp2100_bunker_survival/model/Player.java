@@ -25,7 +25,7 @@ public class Player {
     private String displayName;
     private Inventory currentInventory;
 
-    //Values important to the database, here so that you can convert from database json into a player object
+    //Values important to the database, here so that you can convert from database json into a player object wthout modifying the json
     private int value;
     private String GSI;
 

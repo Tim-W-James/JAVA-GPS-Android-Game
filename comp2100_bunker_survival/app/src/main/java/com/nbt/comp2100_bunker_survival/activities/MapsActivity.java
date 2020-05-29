@@ -33,11 +33,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.android.SphericalUtil;
 import com.nbt.comp2100_bunker_survival.R;
 import com.nbt.comp2100_bunker_survival.model.Inventory;
 import com.nbt.comp2100_bunker_survival.model.Player;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
+import com.nbt.comp2100_bunker_survival.model.items.AbstractItemAdapter;
+import com.nbt.comp2100_bunker_survival.model.items.Item;
 
 
 import java.io.OutputStream;
@@ -70,6 +73,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int treasureMaxDist = 150; // min distance for generating treasure
     private Map<Marker, Treasure> treasureInstances;
 
+    class jsonResponse{
+        private Player result;
+    }
+
     /**
      * Player Data is received from the logon activity. If no data is found, default to
      * the test player
@@ -87,9 +94,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get PlayerName from login screen
         Intent intent = getIntent();
-        String playerName = intent.getStringExtra("PlayerData");
-
-        player = Player.getTestPlayer(); // TODO fetch player data from server
+        String jsonPlayerString = intent.getStringExtra("PlayerJson");
+        Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
+        System.out.println(jsonPlayerString);
+        player = gson.fromJson(jsonPlayerString, Player.class);
 
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();
