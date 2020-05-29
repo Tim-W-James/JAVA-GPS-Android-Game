@@ -44,7 +44,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void findTreasure() {
+    public void findTreasureTest() {
         Inventory invNorm1 = new Inventory(1, 5, 25, itemListNorm1);
         Inventory invNorm2 = new Inventory(1, 7, 9, itemListNorm2);
         Inventory invAdded = new Inventory(

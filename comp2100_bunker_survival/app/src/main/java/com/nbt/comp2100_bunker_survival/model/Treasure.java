@@ -87,6 +87,10 @@ public class Treasure {
         return seed;
     }
 
+    public TreasureType getType() {
+        return type;
+    }
+
     // Returns resId for an icon
     public int getIcon() {
         switch (type) {

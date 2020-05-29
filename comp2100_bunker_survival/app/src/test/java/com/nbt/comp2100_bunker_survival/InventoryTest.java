@@ -6,7 +6,12 @@ import com.nbt.comp2100_bunker_survival.model.items.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -90,6 +95,13 @@ public class InventoryTest {
         assertEquals("Resource not constrained to max", Inventory.RESOURCE_MAX, invOverPopulated.getToiletPaper());
         assertEquals("Unique Item List not constrained to max size", Inventory.ITEMS_MAX, invOverPopulated.getUniqueItems().size());
 
+        Inventory invOverPopulated2 = new Inventory(Inventory.RESOURCE_MAX+1, Inventory.RESOURCE_MAX+1, Inventory.RESOURCE_MAX+1, itemListOverPopulated, true);
+        invOverPopulated.constrainInventory();
+        assertEquals("Resource not constrained to max", Inventory.RESOURCE_MAX, invOverPopulated.getFood());
+        assertEquals("Resource not constrained to max", Inventory.RESOURCE_MAX, invOverPopulated.getScrapMetal());
+        assertEquals("Resource not constrained to max", Inventory.RESOURCE_MAX, invOverPopulated.getToiletPaper());
+        assertEquals("Unique Item List not constrained to max size", Inventory.ITEMS_MAX, invOverPopulated.getUniqueItems().size());
+
         Inventory invUnderPopulated = new Inventory(Inventory.RESOURCE_MIN-1, Inventory.RESOURCE_MIN-1, Inventory.RESOURCE_MIN-1);invOverPopulated.constrainInventory();
         invUnderPopulated.constrainInventory();
         assertEquals("Resource not constrained to min", Inventory.RESOURCE_MIN, invUnderPopulated.getFood());
@@ -132,5 +144,26 @@ public class InventoryTest {
 
         Inventory inv1 = new Inventory(food, scrapMetal, toiletPaper, itemListNorm1);
         assertEquals(totalValue, inv1.getValue());
+    }
+
+    @Test
+    public void getItemNamesTest() {
+        List<String> l = new ArrayList<String>();
+        l.add(weapon1.getName());
+        l.add(weapon2.getName());
+        l.add(weapon3.getName());
+        Collections.sort(l);
+        Inventory inv1 = new Inventory(0, 0, 0, itemListNorm1);
+        assertEquals(l, inv1.getItemNames());
+    }
+
+    @Test
+    public void getItemDetailsTest() {
+        Map<String, List<String>> m = new HashMap<String, List<String>>();
+        m.put(weapon1.getName(), weapon1.getDetails());
+        m.put(weapon2.getName(), weapon2.getDetails());
+        m.put(weapon3.getName(), weapon3.getDetails());
+        Inventory inv1 = new Inventory(0, 0, 0, itemListNorm1);
+        assertEquals(m, inv1.getItemDetails());
     }
 }
