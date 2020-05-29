@@ -79,8 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-//        Intent intent = getIntent();
-//        player = (Player) intent.getParcelableArrayExtra("PlayerData");
+        // Get PlayerName from login screen
+        Intent intent = getIntent();
+        String playerName = intent.getStringExtra("PlayerData");
 
         player = Player.getTestPlayer(); // TODO fetch player data from server
 

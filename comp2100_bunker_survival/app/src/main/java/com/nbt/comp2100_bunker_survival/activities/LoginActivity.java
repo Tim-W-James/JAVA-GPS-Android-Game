@@ -27,18 +27,18 @@ public class LoginActivity extends AppCompatActivity {
      * @param view
      */
     public void login(View view) {
+        String playerName;
         username = findViewById(R.id.editTextUsername);
-//        password = findViewById(R.id.editTextPassword);
 
+        // Server call here
+        playerName = "test";
+
+        // Prepare intent
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-//        intent.putExtra("PlayerData", (Parcelable) Player.getTestPlayer());
 
-        if (username.toString().equalsIgnoreCase("test")) {
-            startActivity(intent);
-            // You guessed the password
-        } else {
-            // You didn't guess the password
-            startActivity(intent);
-        }
+        // Add player name
+        intent.putExtra("PlayerData", playerName);
+
+        startActivity(intent);
     }
 }
