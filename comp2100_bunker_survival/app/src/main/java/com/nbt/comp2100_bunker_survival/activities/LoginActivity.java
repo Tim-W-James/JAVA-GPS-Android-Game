@@ -2,6 +2,7 @@ package com.nbt.comp2100_bunker_survival.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -10,8 +11,8 @@ import com.nbt.comp2100_bunker_survival.R;
 
 
 public class LoginActivity extends AppCompatActivity {
-    EditText username = (EditText)findViewById(R.id.editTextUsername);
-    EditText password = (EditText)findViewById(R.id.editTextPassword);
+    EditText username;
+    EditText password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +25,18 @@ public class LoginActivity extends AppCompatActivity {
      * @param view
      */
     public void login(View view) {
+        username = findViewById(R.id.editTextUsername);
+        password = findViewById(R.id.editTextPassword);
+
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+
         if (username.toString().equalsIgnoreCase("test") &&
         password.toString().equals("1234")) {
+            startActivity(intent);
             // You guessed the password
         } else {
             // You didn't guess the password
+            startActivity(intent);
         }
     }
 }
