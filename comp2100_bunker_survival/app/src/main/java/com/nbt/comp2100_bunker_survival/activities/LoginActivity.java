@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.EditText;
 
 import com.nbt.comp2100_bunker_survival.R;
+import com.nbt.comp2100_bunker_survival.model.Player;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextPassword);
 
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        intent.putExtra("PlayerData", (Parcelable) Player.getTestPlayer());
 
         if (username.toString().equalsIgnoreCase("test") &&
         password.toString().equals("1234")) {
