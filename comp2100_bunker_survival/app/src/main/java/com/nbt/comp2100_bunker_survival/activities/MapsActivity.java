@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -42,7 +41,6 @@ import com.nbt.comp2100_bunker_survival.model.Player;
 import com.nbt.comp2100_bunker_survival.model.Treasure;
 import com.nbt.comp2100_bunker_survival.model.items.AbstractItemAdapter;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
-
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

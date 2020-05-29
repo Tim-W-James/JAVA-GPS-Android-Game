@@ -8,7 +8,6 @@ import com.nbt.comp2100_bunker_survival.model.items.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.LinkedList;
 
 import static org.junit.Assert.*;

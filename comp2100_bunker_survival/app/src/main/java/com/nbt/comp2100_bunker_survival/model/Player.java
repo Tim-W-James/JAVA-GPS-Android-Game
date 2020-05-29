@@ -5,17 +5,10 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 import com.nbt.comp2100_bunker_survival.model.items.AbstractItemAdapter;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 // holds metadata for each individual user of the app
