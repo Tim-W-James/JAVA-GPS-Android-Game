@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -83,6 +84,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         String playerName = intent.getStringExtra("PlayerData");
 
+        // PLAYER KEY TEMPORARY CODE
+        String playerID = readPlayerKey();
+        if (playerID.equals("Default")) {
+            System.out.println("NO PLAYER KEY CURRENTLY DETECTED, WRITING NEW KEY");
+            writePlayerKey("Bob1234");
+        } else {
+            System.out.println("PLAYER KEY IS: " + playerID);
+        }
+
         player = Player.getTestPlayer(); // TODO fetch player data from server
 
         treasureHandler = new Handler();
@@ -115,6 +125,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Zooming the camera to a more appropriate level
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
         locationHandler();
+    }
+
+    /**
+     * Writes the player ID to preferences
+     * @param PlayerKey
+     */
+    public void writePlayerKey(String PlayerKey) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("ID", "testPlayer");
+        editor.commit();
+    }
+
+    /**
+     * Reads the player ID from preferences
+     * @return
+     */
+    public String readPlayerKey() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String PlayerKey = sharedPref.getString("ID","Default");
+
+        return PlayerKey;
     }
 
     //Initializes a handler which runs every second, and calls updateLocation();
