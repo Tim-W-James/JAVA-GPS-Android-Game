@@ -149,7 +149,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return PlayerKey;
     }
 
-    //Initializes a handler which runs every second, and calls updateLocation();
+    /**
+     * Initializes a handler which runs every second, and calls updateLocation();
+     */
     public void locationHandler(){
         final Handler handler = new Handler();
         final Runnable locationUpdater = new Runnable() {
@@ -162,6 +164,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         handler.postDelayed(locationUpdater, 1000);
     }
 
+    /**
+     * Update the players location on the map
+     */
     public void updateLocation(){
         //Checking if the app has permission to use location information
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -205,6 +210,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circle.setCenter(currentLatLang);
     }
 
+    /**
+     * Opens the players inventory
+     * @param view
+     */
     public void inventoryButtonPressed(View view) {
         Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
         intent.putExtra("header", "Your Inventory");
@@ -212,6 +221,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
+    /**
+     * Collects treasure within a radius around the player
+     * @param view
+     */
     public void collectionButtonPressed(View view) {
         Set<Marker> keys = treasureInstances.keySet(); // get the set of keys
         List<Treasure> collectedTreasure = new LinkedList<Treasure>();
@@ -279,8 +292,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         treasureInstances.put(m, t);
     }
 
-    // Util method I'm using for testing
-    // https://android.jlelse.eu/the-danger-of-using-vector-drawables-5485b2a035fe
+    // Turns icons into the correct format for the GMaps API
+    // ADAPTED FROM: https://android.jlelse.eu/the-danger-of-using-vector-drawables-5485b2a035fe
     // Cause I decided to make the icons SVGs
     public static BitmapDescriptor generateBitmapDescriptorFromRes(
             Context context, int resId) {
@@ -310,7 +323,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        return BitmapDescriptorFactory.fromBitmap(bitmap);
 
     }
-
 
     // distribute treasure
     public void checkForGeneration() {
