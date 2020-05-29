@@ -227,7 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Treasure t = Treasure.generateTreasure(loc);
         Marker m = mMap.addMarker(new MarkerOptions()
                 .position(loc)
-                .icon(generateBitmapDescriptorFromRes(this,R.drawable.ic_food_foreground))
+                .icon(generateBitmapDescriptorFromRes(this,R.drawable.ic_treasurechest_foreground))
                 .title(t.getName()));
         //TODO - set the treasure Icon
         //m.setIcon();
