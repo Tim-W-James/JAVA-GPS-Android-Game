@@ -223,11 +223,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng loc = SphericalUtil.computeOffset(currentLatLang, vertOffset, horizOffset);
 
         // pair marker with treasure
-
         Treasure t = Treasure.generateTreasure(loc);
+
+        System.out.println("Generated treasure: " + t);
+
         Marker m = mMap.addMarker(new MarkerOptions()
                 .position(loc)
-                .icon(generateBitmapDescriptorFromRes(this,R.drawable.ic_treasurechest_foreground))
+                .icon(generateBitmapDescriptorFromRes(this,t.getIcon()))
                 .title(t.getName()));
         //TODO - set the treasure Icon
         //m.setIcon();

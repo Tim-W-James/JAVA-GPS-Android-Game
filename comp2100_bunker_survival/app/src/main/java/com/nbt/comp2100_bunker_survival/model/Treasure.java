@@ -1,11 +1,19 @@
 package com.nbt.comp2100_bunker_survival.model;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.nbt.comp2100_bunker_survival.R;
 import com.nbt.comp2100_bunker_survival.model.items.Curiosity;
 import com.nbt.comp2100_bunker_survival.model.items.Item;
 import com.nbt.comp2100_bunker_survival.model.items.Weapon;
@@ -78,6 +86,11 @@ public class Treasure {
 
     public long getSeed() {
         return seed;
+    }
+
+    // Returns resId for an icon
+    public int getIcon() {
+        return R.drawable.ic_treasurechest_foreground;
     }
 
     // factory method that returns a treasure object with a randomly generated inventory
