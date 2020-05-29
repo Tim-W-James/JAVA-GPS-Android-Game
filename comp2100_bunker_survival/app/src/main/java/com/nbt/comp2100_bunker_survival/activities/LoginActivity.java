@@ -31,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //TODO get from preferences
         String playerID = readPlayerKey();
         System.out.println(playerID);
         if (!playerID.equals("Default")){
