@@ -63,6 +63,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int treasureMaxDist = 150; // min distance for generating treasure
     private Map<Marker, Treasure> treasureInstances;
 
+    /**
+     * Player Data is received from the logon activity. If no data is found, default to
+     * the test player
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +78,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+//        Intent intent = getIntent();
+//        player = (Player) intent.getParcelableArrayExtra("PlayerData");
+
         player = Player.getTestPlayer(); // TODO fetch player data from server
+
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();
         startGeneratingTreasure();
