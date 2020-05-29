@@ -130,7 +130,6 @@ public class Treasure {
 
     // factory method that returns a treasure object with an generated inventory
     // uses inputted seed
-    // TODO improve resource distribution
     @NonNull
     public static Treasure generateTreasure(double latitude, double longitude, long seed) {
         Random rand = new Random(seed);
