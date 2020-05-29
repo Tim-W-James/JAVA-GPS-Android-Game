@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,6 +53,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -72,10 +74,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int treasureMinDist = 30; // min distance for generating treasure
     private int treasureMaxDist = 150; // min distance for generating treasure
     private Map<Marker, Treasure> treasureInstances;
-
-    class jsonResponse{
-        private Player result;
-    }
 
     /**
      * Player Data is received from the logon activity. If no data is found, default to
@@ -98,6 +96,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
         System.out.println(jsonPlayerString);
         player = gson.fromJson(jsonPlayerString, Player.class);
+        String playerName = intent.getStringExtra("PlayerData");
+
+        // PLAYER KEY TEMPORARY CODE
+        String playerID = readPlayerKey();
+        if (playerID.equals("Default")) {
+            System.out.println("NO PLAYER KEY CURRENTLY DETECTED, WRITING NEW KEY");
+            writePlayerKey("Bob1234");
+        } else {
+            System.out.println("PLAYER KEY IS: " + playerID);
+        }
+
+        player = Player.getTestPlayer(); // TODO fetch player data from server
 
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();
@@ -131,7 +141,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationHandler();
     }
 
-    //Initializes a handler which runs every second, and calls updateLocation();
+    /**
+     * Writes the player ID to preferences
+     * @param PlayerKey
+     */
+    public void writePlayerKey(String PlayerKey) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("ID", "testPlayer");
+        editor.commit();
+    }
+
+    /**
+     * Reads the player ID from preferences
+     * @return
+     */
+    public String readPlayerKey() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String PlayerKey = sharedPref.getString("ID","Default");
+
+        return PlayerKey;
+    }
+
+    /**
+     * Initializes a handler which runs every second, and calls updateLocation();
+     */
     public void locationHandler(){
         final Handler handler = new Handler();
         final Runnable locationUpdater = new Runnable() {
@@ -144,6 +178,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         handler.postDelayed(locationUpdater, 1000);
     }
 
+    /**
+     * Update the players location on the map
+     */
     public void updateLocation(){
         //Checking if the app has permission to use location information
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -155,8 +192,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
+        // If there are no providers, loop instead of crashing
+        if (locationManager.getBestProvider(new Criteria(), false) == null) {
+            return;
+        }
+
         locationManager.requestLocationUpdates(
-                locationManager.getBestProvider(new Criteria(), false), 0, 0, new LocationListener() {
+                Objects.requireNonNull(locationManager.getBestProvider(new Criteria(), false)), 0, 0, new LocationListener() {
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
                     }
@@ -171,7 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
         Location currentLocation = locationManager.getLastKnownLocation(
-                locationManager.getBestProvider(new Criteria(), false));
+                Objects.requireNonNull(locationManager.getBestProvider(new Criteria(), false)));
         if (currentLocation == null){
             Toast.makeText(getApplicationContext(),"No Location data", Toast.LENGTH_SHORT).show();
             return;
@@ -186,6 +228,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circle.setCenter(currentLatLang);
     }
 
+    /**
+     * Opens the players inventory
+     * @param view
+     */
     public void inventoryButtonPressed(View view) {
         Intent intent = new Intent(getApplicationContext(), InventoryActivity.class);
         intent.putExtra("header", "Your Inventory");
@@ -193,6 +239,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
+    /**
+     * Collects treasure within a radius around the player
+     * @param view
+     */
     public void collectionButtonPressed(View view) {
         Set<Marker> keys = treasureInstances.keySet(); // get the set of keys
         List<Treasure> collectedTreasure = new LinkedList<Treasure>();
@@ -200,11 +250,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // find which treasure is close enough for collection
         for (Marker m : keys) {
             Treasure t = treasureInstances.get(m);
-            if (SphericalUtil.computeDistanceBetween(
-                    new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
-                    <= (collectionRadius)) {
-                m.remove();
-                collectedTreasure.add(t);
+            if (t != null) {
+                if (SphericalUtil.computeDistanceBetween(
+                        new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                        <= (collectionRadius)) {
+                    m.remove();
+                    collectedTreasure.add(t);
+                }
             }
         }
 
@@ -261,8 +313,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         treasureInstances.put(m, t);
     }
 
-    // Util method I'm using for testing
-    // https://android.jlelse.eu/the-danger-of-using-vector-drawables-5485b2a035fe
+    // Turns icons into the correct format for the GMaps API
+    // ADAPTED FROM: https://android.jlelse.eu/the-danger-of-using-vector-drawables-5485b2a035fe
     // Cause I decided to make the icons SVGs
     public static BitmapDescriptor generateBitmapDescriptorFromRes(
             Context context, int resId) {
@@ -293,7 +345,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
     // distribute treasure
     public void checkForGeneration() {
         // TODO improve distribution
@@ -307,14 +358,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (Marker m : keys) {
                     Treasure t = treasureInstances.get(m);
 
-                    if (SphericalUtil.computeDistanceBetween(
-                            new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
-                            > (treasureMaxDist+(treasureMaxDist*0.5))) {
-                        treasureInstances.remove(m); // remove treasure from list
-                        m.remove(); // remove marker from map
+                    if (t != null) {
+                        if (SphericalUtil.computeDistanceBetween(
+                                new LatLng(t.getLatitude(), t.getLongitude()), currentLatLang)
+                                > (treasureMaxDist+(treasureMaxDist*0.5))) {
+                            treasureInstances.remove(m); // remove treasure from list
+                            m.remove(); // remove marker from map
 
-                        addNewTreasure(); // create replacement treasure
-                        break;
+                            addNewTreasure(); // create replacement treasure
+                            break;
+                        }
                     }
                 }
             }

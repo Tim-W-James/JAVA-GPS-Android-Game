@@ -93,9 +93,9 @@ public class Treasure {
             case FOOD:
                 return R.drawable.ic_food_foreground;
             case SCRAP_METAL:
-                return R.drawable.ic_toiletpaper_foreground;
+                return R.drawable.ic_scrapmetal;
             case TOILET_PAPER:
-                return R.drawable.ic_toiletpaper_foreground;
+                return R.drawable.ic_toiletpaper;
             default:
                 return R.drawable.ic_treasurechest_foreground;
         }
