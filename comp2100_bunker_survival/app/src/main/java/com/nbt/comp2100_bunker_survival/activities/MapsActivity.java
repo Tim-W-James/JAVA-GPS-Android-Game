@@ -252,8 +252,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static BitmapDescriptor generateBitmapDescriptorFromRes(
             Context context, int resId) {
 
-        int height = 100;
-        int width = 100;
+        int height = 150;
+        int width = 150;
 
         Drawable drawable = ContextCompat.getDrawable(context, resId);
         drawable.setBounds(
@@ -267,11 +267,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Bitmap.Config.ARGB_8888);
 
 //        Bitmap b = BitmapFactory.decodeResource(context, resId);
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.draw(canvas);
+
         Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, width, height, false);
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
 
-//        Canvas canvas = new Canvas(bitmap);
-//        drawable.draw(canvas);
 //        return BitmapDescriptorFactory.fromBitmap(bitmap);
 
     }
