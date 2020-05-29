@@ -96,18 +96,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Gson gson = new GsonBuilder().registerTypeAdapter(Item.class, new AbstractItemAdapter()).create();
         System.out.println(jsonPlayerString);
         player = gson.fromJson(jsonPlayerString, Player.class);
-        String playerName = intent.getStringExtra("PlayerData");
-
-        // PLAYER KEY TEMPORARY CODE
-        String playerID = readPlayerKey();
-        if (playerID.equals("Default")) {
-            System.out.println("NO PLAYER KEY CURRENTLY DETECTED, WRITING NEW KEY");
-            writePlayerKey("Bob1234");
-        } else {
-            System.out.println("PLAYER KEY IS: " + playerID);
-        }
-
-        player = Player.getTestPlayer(); // TODO fetch player data from server
 
         treasureHandler = new Handler();
         treasureInstances = new HashMap<Marker, Treasure>();

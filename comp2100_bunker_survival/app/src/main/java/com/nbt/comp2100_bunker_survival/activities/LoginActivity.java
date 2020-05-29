@@ -2,7 +2,9 @@ package com.nbt.comp2100_bunker_survival.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
@@ -31,8 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //TODO get from preferences
-        String playerID = "bc2b66bc-1328-408b-a4c7-c605045b9be8";
-        if (playerID != null){
+        String playerID = readPlayerKey();
+        System.out.println(playerID);
+        if (!playerID.equals("Default")){
             //A player has already been created on this device - get their data
             loadingVisible();
             fetchPlayerData(playerID);
@@ -153,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                             stringBuilder.append(output);
                         }
                         String responseJsonString = stringBuilder.toString();
+                        writePlayerKey(newPlayer.getId());
                         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         intent.putExtra("PlayerJson", responseJsonString);
                         startActivity(intent);
@@ -171,5 +175,27 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         thread.start();
+    }
+
+    /**
+     * Writes the player ID to preferences
+     * @param PlayerKey
+     */
+    public void writePlayerKey(String PlayerKey) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("ID", PlayerKey);
+        editor.commit();
+    }
+
+    /**
+     * Reads the player ID from preferences
+     * @return
+     */
+    public String readPlayerKey() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String PlayerKey = sharedPref.getString("ID","Default");
+
+        return PlayerKey;
     }
 }
