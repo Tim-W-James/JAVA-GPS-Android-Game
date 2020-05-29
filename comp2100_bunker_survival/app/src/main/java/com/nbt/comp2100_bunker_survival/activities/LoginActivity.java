@@ -28,13 +28,12 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void login(View view) {
         username = findViewById(R.id.editTextUsername);
-        password = findViewById(R.id.editTextPassword);
+//        password = findViewById(R.id.editTextPassword);
 
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
 //        intent.putExtra("PlayerData", (Parcelable) Player.getTestPlayer());
 
-        if (username.toString().equalsIgnoreCase("test") &&
-        password.toString().equals("1234")) {
+        if (username.toString().equalsIgnoreCase("test")) {
             startActivity(intent);
             // You guessed the password
         } else {
