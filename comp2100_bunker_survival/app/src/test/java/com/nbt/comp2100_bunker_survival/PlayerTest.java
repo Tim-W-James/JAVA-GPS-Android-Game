@@ -128,18 +128,13 @@ public class PlayerTest {
         Inventory invNorm1 = new Inventory(1, 5, 25, itemListNorm1);
         Player player1 = new Player("Bob", invNorm1);
 
-        // save to file
-        File file = new File("player_test.json");
-        file.delete();
-        System.out.println(player1.saveToJSON());
+        // save to string
         String s = player1.saveToJSON();
 
         // load from file
         Player comparisonPlayer = Player.loadFromJSON(s);
 
         assertEquals("Object loaded from JSON does not match original", player1, comparisonPlayer);
-        System.out.println(file.getAbsoluteFile());
-        //file.delete();
     }
 
     @Test
