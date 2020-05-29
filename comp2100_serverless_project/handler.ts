@@ -44,6 +44,7 @@ export const createUser: Handler = async (event, _context) => {
   const auth = event.headers['Authorization'];
 
   if (!authenticate(auth)){
+    console.log("Bad authentication.");
     return {
       statusCode: 401,
       body: 'Bad authentication.',
@@ -54,6 +55,7 @@ export const createUser: Handler = async (event, _context) => {
 
   //Check if input data is valid
   if (!validInput(data)){
+    console.log("Malformed data.");
     return {
       statusCode: 400,
       body: 'Malformed data.',
@@ -71,13 +73,14 @@ export const createUser: Handler = async (event, _context) => {
   try {
     const result = await dynamoDB.get(fetchParams).promise();
     if (result.Item != null){
+      console.log(`UserID ${data['id']} already exists`);
       return {
         statusCode: 400,
         body: 'That user already exists.',
       }
     }
   } catch (e){
-    console.log(e.message)
+    console.log(e.message);
     return {
       statusCode: 500,
       body: 'Couldn\'t connect to the database.',
@@ -104,12 +107,13 @@ export const createUser: Handler = async (event, _context) => {
   //Attempt to create database entry
   try {
     await dynamoDB.put(params).promise()
+    console.log(`UserID ${data['id']} was created`);
     return {
       statusCode: 200,
       body: JSON.stringify(params.Item),
     }
   } catch (e) {
-    console.log(e.message)
+    console.log(e.message);
     return {
       statusCode: 500,
       body: 'Couldn\'t create the user item.',
@@ -121,6 +125,7 @@ export const modifyUser: Handler = async (event, _context) => {
   const auth = event.headers['Authorization'];
   
   if (!authenticate(auth)){
+    console.log("Bad authentication.");
     return {
       statusCode: 401,
       body: 'Bad authentication.',
@@ -130,6 +135,7 @@ export const modifyUser: Handler = async (event, _context) => {
 
   //Check if input data is valid
   if (!validInput(data)){
+    console.log("Malformed data.");
     return {
       statusCode: 400,
       body: 'Malformed data.',
@@ -147,13 +153,14 @@ export const modifyUser: Handler = async (event, _context) => {
   try {
     const result = await dynamoDB.get(fetchParams).promise();
     if (result.Item == null){
+      console.log(`UserID ${data['id']} does not exist`);
       return {
         statusCode: 404,
         body: 'That user does not exist.',
       }
     }
   } catch (e){
-    console.log(e.message)
+    console.log(e.message);
     return {
       statusCode: 500,
       body: 'Couldn\'t connect to the database.',
@@ -180,6 +187,7 @@ export const modifyUser: Handler = async (event, _context) => {
   //Attempt to create database entry
   try {
     await dynamoDB.put(params).promise()
+    console.log(`UserID ${data['id']} was modified`);
     return {
       statusCode: 200,
       body: JSON.stringify(params.Item),
@@ -197,6 +205,7 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
 
   const auth = event.headers['Authorization'];
   if (!authenticate(auth)){
+    console.log(`Bad authentication`);
     return {
       statusCode: 401,
       body: 'Bad authentication.',
@@ -207,6 +216,7 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
 
   //Check if input data is valid
   if (typeof id != "string"){
+    console.log("Malformed data");
     return {
       statusCode: 400,
       body: 'Malformed data.',
@@ -225,6 +235,7 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
   try {
     const result = await dynamoDB.query(fetchParams).promise();
     if (result.Items[0] == null){
+      console.log(`UserID ${id} does not exist`);
       return {
         statusCode: 404,
         body: 'That user does not exist.',
@@ -237,7 +248,7 @@ export const getUserInfo: APIGatewayProxyHandler = async (event, _context) => {
       }, null, 2),
     }
   } catch (e){
-    console.log(e.message)
+    console.log(e.message);
     return {
       statusCode: 500,
       body: 'Couldn\'t connect to the database.',
@@ -249,6 +260,7 @@ export const getTopFive: APIGatewayProxyHandler = async (event, _context) => {
 
   const auth = event.headers['Authorization'];
   if (!authenticate(auth)){
+    console.log("Bad authentication");
     return {
       statusCode: 401,
       body: 'Bad authentication.',
@@ -270,11 +282,13 @@ export const getTopFive: APIGatewayProxyHandler = async (event, _context) => {
   try {
     const result = await dynamoDB.query(fetchParams).promise();
     if (result.Items == null){ 
+      console.log("This should not happen");
       return {
         statusCode: 400,
         body: 'No users exist!',
       }
     }
+    console.log("Retrieved top 5");
     return {
       statusCode: 200,
       body:  JSON.stringify({
@@ -282,7 +296,7 @@ export const getTopFive: APIGatewayProxyHandler = async (event, _context) => {
       }, null, 2),
     }
   } catch (e){
-    console.log(e.message)
+    console.log(e.message);
     return {
       statusCode: 500,
       body: 'Couldn\'t connect to the database.',
