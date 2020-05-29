@@ -24,11 +24,11 @@ public class Treasure {
 
     // constants
     private static final int FOOD_MAX = 50;
-    private static final int FOOD_MIN = 0;
+    private static final int FOOD_MIN = 10;
     private static final int SCRAPMETAL_MAX = 50;
-    private static final int SCRAPMETAL_MIN = 0;
+    private static final int SCRAPMETAL_MIN = 10;
     private static final int TOILETPAPER_MAX = 50;
-    private static final int TOILETPAPER_MIN = 0;
+    private static final int TOILETPAPER_MIN = 10;
 
     // constructor for empty inventory
     public Treasure(String name, double latitude, double longitude, long seed) {
