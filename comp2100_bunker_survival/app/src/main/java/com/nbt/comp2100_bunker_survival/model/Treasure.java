@@ -25,6 +25,7 @@ import java.util.Random;
 public class Treasure {
     // basic properties
     private String name;
+    private TreasureType type;
     private double latitude;
     private double longitude;
     private Inventory treasureInventory;
@@ -41,6 +42,7 @@ public class Treasure {
     // constructor for empty inventory
     public Treasure(String name, double latitude, double longitude, long seed) {
         this.name = name;
+        this.type = TreasureType.OTHER;
         this.latitude = latitude;
         this.longitude = longitude;
         this.seed = seed;
@@ -57,10 +59,7 @@ public class Treasure {
 
     // constructor for input treasure inventory
     public Treasure(String name, double latitude, double longitude, long seed, Inventory treasureInventory) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.seed = seed;
+        this (name, latitude, longitude, seed);
         this.treasureInventory = treasureInventory;
     }
     // also accepts Location input
@@ -90,7 +89,20 @@ public class Treasure {
 
     // Returns resId for an icon
     public int getIcon() {
-        return R.drawable.ic_treasurechest_foreground;
+        switch (type) {
+            case FOOD:
+                return R.drawable.ic_food_foreground;
+            case SCRAP_METAL:
+                return R.drawable.ic_toiletpaper_foreground;
+            case TOILET_PAPER:
+                return R.drawable.ic_toiletpaper_foreground;
+            default:
+                return R.drawable.ic_treasurechest_foreground;
+        }
+    }
+
+    public void setType(TreasureType type) {
+        this.type = type;
     }
 
     // factory method that returns a treasure object with a randomly generated inventory
@@ -138,7 +150,9 @@ public class Treasure {
                         0,
                         0);
                 inv1.addUniqueItem(generateItem(latitude, longitude, seed));
-                return new Treasure("Food Cache", latitude, longitude, seed, inv1);
+                Treasure tFood = new Treasure("Food Cache", latitude, longitude, seed, inv1);
+                tFood.setType(TreasureType.FOOD);
+                return tFood;
 
             // scrap metal cache
             case 2:
@@ -147,7 +161,9 @@ public class Treasure {
                         rand.nextInt(SCRAPMETAL_MAX)+SCRAPMETAL_MIN,
                         0);
                 inv2.addUniqueItem(generateItem(latitude, longitude, seed));
-                return new Treasure("Scrap Metal Cache", latitude, longitude, seed, inv2);
+                Treasure tScrapMetal = new Treasure("Scrap Metal Cache", latitude, longitude, seed, inv2);
+                tScrapMetal.setType(TreasureType.SCRAP_METAL);
+                return tScrapMetal;
 
             // toilet paper cache
             case 3:
@@ -156,7 +172,9 @@ public class Treasure {
                         0,
                         rand.nextInt(TOILETPAPER_MAX)+TOILETPAPER_MIN);
                 inv3.addUniqueItem(generateItem(latitude, longitude, seed));
-                return new Treasure("Toilet Paper Cache", latitude, longitude, seed, inv3);
+                Treasure tToiletPaper = new Treasure("Toilet Paper Cache", latitude, longitude, seed, inv3);
+                tToiletPaper.setType(TreasureType.TOILET_PAPER);
+                return tToiletPaper;
 
             // large resource cache
             default:
