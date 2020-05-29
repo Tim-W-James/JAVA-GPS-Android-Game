@@ -30,9 +30,6 @@ const authenticate = (auth: string) => {
   var username = creds[0];
   var password = creds[1];
 
-  console.log(username);
-  console.log(password);
-
   //These should be encrypted and stored as environment variables ¯\_(ツ)_/¯ 
   if (username != "comp2100BunkerAdmin" || password != 'zvQzzetkP2vr45HR'){
     return false;
@@ -86,7 +83,11 @@ export const createUser: Handler = async (event, _context) => {
       body: 'Couldn\'t connect to the database.',
     }
   }
-
+  var uniqueItemsData = [];
+  var uniqueItemsArray = data['currentInventory']['uniqueItems'];
+  uniqueItemsArray.forEach(element => {
+    uniqueItemsData.push(element);
+  })
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
@@ -96,7 +97,7 @@ export const createUser: Handler = async (event, _context) => {
         food: data['currentInventory']['food'],
         scrapMetal: data['currentInventory']['scrapMetal'],
         toiletPaper: data['currentInventory']['toiletPaper'],
-        uniqueItems: data['currentInventory']['uniqueItems'],
+        uniqueItems: uniqueItemsData,
         value: data['currentInventory']['value'],
       },
       value: data['currentInventory']['value'],
@@ -166,7 +167,11 @@ export const modifyUser: Handler = async (event, _context) => {
       body: 'Couldn\'t connect to the database.',
     }
   }
-
+  var uniqueItemsData = [];
+  var uniqueItemsArray = data['currentInventory']['uniqueItems'];
+  uniqueItemsArray.forEach(element => {
+    uniqueItemsData.push(element);
+  })
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
@@ -176,7 +181,7 @@ export const modifyUser: Handler = async (event, _context) => {
         food: data['currentInventory']['food'],
         scrapMetal: data['currentInventory']['scrapMetal'],
         toiletPaper: data['currentInventory']['toiletPaper'],
-        uniqueItems: data['currentInventory']['uniqueItems'],
+        uniqueItems: uniqueItemsData,
         value: data['currentInventory']['value'],
       },
       value: data['currentInventory']['value'],
